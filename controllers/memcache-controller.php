@@ -13,7 +13,7 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key doesn't already exist.
+	 * Adds data to the cache, if the cache key does not already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.

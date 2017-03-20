@@ -8,25 +8,39 @@
 class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	/** @var Object_Cache_Controller_Interface Controller */
 	protected $controller;
-
-	/** @var Object_Cache_Manager Manager */
-	protected $manager;
+	/** @var string Group */
+	protected $group;
 
 	/**
 	 * Object_Cache_Key_Controller constructor.
 	 *
 	 * @param Object_Cache_Controller_Interface $controller
+	 * @param string $group The group that is being requested
 	 */
-	public function __construct( Object_Cache_Controller_Interface $controller ) {
+	public function __construct( Object_Cache_Controller_Interface $controller, $group ) {
 		$this->controller = $controller;
-	}
-
-	protected function get_key( $key ) {
-		return sprintf( Object_Cache_Manager::get_key_format(), $key );
+		$this->group      = $group;
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key doesn't already exist.
+	 * Builds the unique cache key for the contextual request.
+	 *
+	 * @param string $key The requested key.
+	 *
+	 * @return string
+	 */
+	protected function get_key( $key ) {
+		$prefix = '';
+
+		if ( ! empty( $this->group ) ) {
+			$prefix = $this->group . ':';
+		}
+
+		return sprintf( Object_Cache_Manager::get_key_format(), $prefix . $key );
+	}
+
+	/**
+	 * Adds data to the cache, if the cache key does not already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.
@@ -36,9 +50,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
 	public function add( $key, $data, $expire ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->add( $key, $data, $expire );
+		return $this->controller->add( $this->get_key( $key ), $data, $expire );
 	}
 
 	/**
@@ -50,9 +62,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return false|int False on failure, the item's new value on success.
 	 */
 	public function decrease( $key, $offset ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->decrease( $key, $offset );
+		return $this->controller->decrease( $this->get_key( $key ), $offset );
 	}
 
 	/**
@@ -63,9 +73,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return bool True on successful removal, false on failure.
 	 */
 	public function delete( $key ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->delete( $key );
+		return $this->controller->delete( $this->get_key( $key ) );
 	}
 
 	/**
@@ -90,9 +98,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *                      contents on success
 	 */
 	public function get( $key, $force = false, &$found = null ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->get( $key, $force, $found );
+		return $this->controller->get( $this->get_key( $key ), $force, $found );
 	}
 
 	/**
@@ -104,9 +110,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return false|int False on failure, the item's new value on success.
 	 */
 	public function increase( $key, $offset = 1 ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->increase( $key, $offset );
+		return $this->controller->increase( $this->get_key( $key ), $offset );
 	}
 
 	/**
@@ -120,9 +124,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
 	public function replace( $key, $data, $expire = 0 ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->replace( $key, $data, $expire );
+		return $this->controller->replace( $this->get_key( $key ), $data, $expire );
 	}
 
 	/**
@@ -139,8 +141,6 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return bool False on failure, true on success
 	 */
 	public function set( $key, $data, $expire = 0 ) {
-		$key = $this->get_key( $key );
-
-		return $this->controller->set( $key, $data, $expire );
+		return $this->controller->set( $this->get_key( $key ), $data, $expire );
 	}
 }
