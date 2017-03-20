@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Class Object_Cache_Key_Controller
+ *
+ * Proxy class to easily format the key for any request
+ */
+
 class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
     /** @var Object_Cache_Controller_Interface Controller */
     protected $controller;

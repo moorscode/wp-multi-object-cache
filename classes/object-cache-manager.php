@@ -14,6 +14,7 @@ class Object_Cache_Manager
 
     public static function initialize()
     {
+        // @todo extract configuration
         // read configuration
         $config = [
             'controllers' => [
@@ -68,6 +69,13 @@ class Object_Cache_Manager
     }
 
     /**
+     * @return Object_Cache_Controller_Implementation_Interface[] All the controllers
+     */
+    public static function get_controllers() {
+        return self::$controllers;
+    }
+
+    /**
      * @param string $group
      *
      * @return Object_Cache_Controller_Interface
@@ -98,8 +106,13 @@ class Object_Cache_Manager
      * @param string $group
      * @param string $alias
      */
-    public static function group_alias($group, $alias)
+    public static function add_group_alias($group, $alias)
     {
+        /**
+         * @todo decide
+         * Use a filter instead?
+         * + Group Alias manager?
+         */
         self::$group_aliases[$group] = $alias;
     }
 
@@ -117,6 +130,11 @@ class Object_Cache_Manager
         return $multisite;
     }
 
+    /**
+     * Gets the format the key should be following
+     *
+     * @return string
+     */
     public static function get_key_format()
     {
         $blog_format = '%s';
@@ -134,10 +152,10 @@ class Object_Cache_Manager
     {
         // Register controllers
         foreach ($controllers as $controller => $data) {
-            // @todo do class exists checks etc.
-            $controller_instance = new $controller($data['config']);
+            // @todo class exists checks etc.
+            self::$controllers[$controller] = new $controller($data['config']);
             foreach ($data['groups'] as $group) {
-                self::assign_group($controller_instance, $group);
+                self::assign_group(self::$controllers[$controller], $group);
             }
         }
     }

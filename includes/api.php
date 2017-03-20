@@ -83,14 +83,35 @@ function wp_cache_delete($key, $group = '')
  * @param string $group Optional. Where the cache contents are grouped. Default empty.
  * @return bool False on failure, true on success
  */
-function wp_cache_flush($group = '')
+function wp_cache_flush($group = null)
 {
-    /**
-     * @todo Get all controllers to flush when no group is supplied
-     */
+    // No group supplied, flush everything.
+    if ( null === $group ) {
+        return wp_cache_flush_all();
+    }
+
+    // Flush specific group.
     $object_cache = Object_Cache_Manager::get_controller($group);
 
     return $object_cache->flush();
+}
+
+/**
+ * Removes all cache items from all controllers.
+ *
+ * @return bool False on failure, true on success
+ */
+function wp_cache_flush_all()
+{
+    $success = true;
+
+    $controllers = Object_Cache_Manager::get_controllers();
+    foreach ($controllers as $controller) {
+        // @todo track status per controller for request?
+        $success = $controller->flush() && $success;
+    }
+
+    return $success;
 }
 
 /**
@@ -190,7 +211,7 @@ function wp_cache_add_global_groups($groups)
 {
     $groups = (array)$groups;
     foreach ($groups as $group) {
-        Object_Cache_Manager::group_alias('', $group);
+        Object_Cache_Manager::add_group_alias('', $group);
     }
 }
 
@@ -204,7 +225,7 @@ function wp_cache_add_non_persistent_groups($groups)
     // Default cache doesn't persist so nothing to do here.
     $groups = (array)$groups;
     foreach ($groups as $group) {
-        Object_Cache_Manager::group_alias('non-persistent', $group);
+        Object_Cache_Manager::add_group_alias('non-persistent', $group);
     }
 }
 
