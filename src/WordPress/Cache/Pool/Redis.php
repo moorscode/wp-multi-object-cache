@@ -58,7 +58,7 @@ class Redis implements WPCacheItemPoolInterface {
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush($args = null) {
+	public function clear() {
 		// TODO: Implement flush() method.
 	}
 

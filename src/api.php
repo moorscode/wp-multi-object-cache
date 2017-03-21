@@ -5,12 +5,13 @@
  *
  * @subpackage Cache
  */
+use WordPress\Cache\Manager;
 
 /**
  * Sets up Object Cache Global and assigns it.
  */
 function wp_cache_init() {
-	Object_Cache_Manager::initialize();
+	Manager::initialize();
 }
 
 /**
@@ -26,7 +27,7 @@ function wp_cache_init() {
  * @return bool False if cache key and group already exist, true on success.
  */
 function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	$args = array(
 		'expire' => (int) $expire
@@ -60,7 +61,7 @@ function wp_cache_close() {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_decr( $key, $offset = 1, $group = '' ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	return $object_cache->decrease( $key, $offset );
 }
@@ -74,7 +75,7 @@ function wp_cache_decr( $key, $offset = 1, $group = '' ) {
  * @return bool True on successful removal, false on failure.
  */
 function wp_cache_delete( $key, $group = '' ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	return $object_cache->delete( $key );
 }
@@ -93,23 +94,23 @@ function wp_cache_flush( $group = null ) {
 	}
 
 	// Flush specific group.
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	return $object_cache->flush();
 }
 
 /**
- * Removes all cache items from all controllers.
+ * Removes all cache items from all pools.
  *
  * @return bool False on failure, true on success
  */
 function wp_cache_flush_all() {
 	$success = true;
 
-	$controllers = Object_Cache_Manager::get_controllers();
-	foreach ( $controllers as $controller ) {
+	$pools = Manager::get_pools();
+	foreach ( $pools as $pool ) {
 		// @todo track status per controller for request?
-		$success = $controller->flush() && $success;
+		$success = $pool->clear() && $success;
 	}
 
 	return $success;
@@ -129,7 +130,7 @@ function wp_cache_flush_all() {
  *                      contents on success
  */
 function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	return $object_cache->get( $key, $force, $found );
 }
@@ -144,7 +145,7 @@ function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_incr( $key, $offset = 1, $group = '' ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	return $object_cache->increase( $key, $offset );
 }
@@ -162,7 +163,7 @@ function wp_cache_incr( $key, $offset = 1, $group = '' ) {
  * @return bool False if original value does not exist, true if contents were replaced
  */
 function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	$args = array(
 		'expire' => (int) $expire
@@ -186,7 +187,7 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
  * @return bool False on failure, true on success
  */
 function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Object_Cache_Manager::get_controller( $group );
+	$object_cache = Manager::get_controller( $group );
 
 	$args = array(
 		'expire' => (int) $expire
@@ -203,7 +204,7 @@ function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
  * @param int $blog_id Site ID.
  */
 function wp_cache_switch_to_blog( $blog_id ) {
-	Object_Cache_Manager::switch_to_blog( $blog_id );
+	Manager::switch_to_blog( $blog_id );
 }
 
 /**
@@ -214,7 +215,7 @@ function wp_cache_switch_to_blog( $blog_id ) {
 function wp_cache_add_global_groups( $groups ) {
 	$groups = (array) $groups;
 	foreach ( $groups as $group ) {
-		Object_Cache_Manager::add_group_alias( '', $group );
+		Manager::add_group_alias( '', $group );
 	}
 }
 
@@ -227,7 +228,7 @@ function wp_cache_add_non_persistent_groups( $groups ) {
 	// Default cache doesn't persist so nothing to do here.
 	$groups = (array) $groups;
 	foreach ( $groups as $group ) {
-		Object_Cache_Manager::add_group_alias( 'non-persistent', $group );
+		Manager::add_group_alias( 'non-persistent', $group );
 	}
 }
 

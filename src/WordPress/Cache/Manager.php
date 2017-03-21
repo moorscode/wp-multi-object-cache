@@ -8,9 +8,9 @@ class Manager {
 	/** @var array */
 	protected static $group_aliases = array();
 	/** @var  array */
-	protected static $controllers = array();
+	protected static $pools = array();
 	/** @var array */
-	protected static $controller_groups = array();
+	protected static $pool_groups = array();
 	/** @var int Blog ID */
 	protected static $blog_id;
 
@@ -25,9 +25,9 @@ class Manager {
 		// @todo extract configuration
 		// read configuration
 		$config = array(
-			'controllers' => array(
+			'pools' => array(
 				// Default/fallback controller.
-				'Redis_Controller'          => array(
+				'\WordPress\Cache\Pool\Redis'         => array(
 					'data'   => array(
 						'config' => array(
 							'ip'   => '127.0.0.1',
@@ -39,7 +39,7 @@ class Manager {
 					)
 				),
 				// Use Memcached controller for transients.
-				'Memcache_Controller'       => array(
+				'\WordPress\Cache\Pool\Memcache'      => array(
 					'data'   => array(
 						'config' => array(
 							'ip'   => '127.0.0.1',
@@ -51,7 +51,7 @@ class Manager {
 					),
 				),
 				// Use Non Persistent Pool.
-				'Non_Persistent_Controller' => array(
+				'\WordPress\Cache\Pool\NonPersistent' => array(
 					'data'   => array(
 						'config' => array()
 					),
@@ -63,24 +63,24 @@ class Manager {
 		);
 
 		self::switch_to_blog( get_current_blog_id() );
-		self::register_controllers( $config['controllers'] );
+		self::register_pools( $config['pools'] );
 	}
 
 	/**
-	 * @param WPCacheItemPoolInterface $controller
+	 * @param WPCacheItemPoolInterface $pool
 	 * @param string $group
 	 */
-	public static function assign_group( WPCacheItemPoolInterface $controller, $group ) {
-		self::$controller_groups[ $group ] = $controller;
+	public static function assign_group( WPCacheItemPoolInterface $pool, $group ) {
+		self::$pool_groups[ $group ] = $pool;
 	}
 
 	/**
-	 * Gets all registered controllers.
+	 * Gets all registered pools.
 	 *
 	 * @return WPCacheItemPoolInterface[]
 	 */
-	public static function get_controllers() {
-		return self::$controllers;
+	public static function get_pools() {
+		return self::$pools;
 	}
 
 	/**
@@ -96,13 +96,13 @@ class Manager {
 			$use_group = self::$group_aliases[ $use_group ];
 		}
 
-		$controller = new Null( array() );
-		if ( isset( self::$controller_groups[ $use_group ] ) ) {
-			$controller = self::$controller_groups[ $use_group ];
+		$pool = new Null( array() );
+		if ( isset( self::$pool_groups[ $use_group ] ) ) {
+			$pool = self::$pool_groups[ $use_group ];
 		}
 
 		// Create a new Key Pool with initial group name.
-		return new WPCacheItemKeyContoller( $controller, $group );
+		return new WPCacheItemKeyContoller( $pool, $group );
 	}
 
 	/**
@@ -166,23 +166,23 @@ class Manager {
 	}
 
 	/**
-	 * Registers the controllers for the groups they specified.
+	 * Registers the pools for the groups they specified.
 	 *
-	 * @param array $controllers List of controllers to load.
+	 * @param array $pools List of pools to load.
 	 *
 	 * @throws \Exception
 	 */
-	protected static function register_controllers( $controllers ) {
-		// Register controllers.
-		foreach ( $controllers as $controller => $data ) {
-			if ( ! class_exists( $controller ) ) {
+	protected static function register_pools( $pools ) {
+		// Register pools.
+		foreach ( $pools as $pool => $data ) {
+			if ( ! class_exists( $pool ) ) {
 				// Throw exception.
-				throw new \Exception( 'Class ' . $controller . ' not found while loading Object Cache Controllers.' );
+				throw new \Exception( 'Class ' . $pool . ' not found while loading Object Cache pools.' );
 			}
 
-			self::$controllers[ $controller ] = new $controller( $data['config'] );
+			self::$pools[ $pool ] = new $pool( $data['config'] );
 			foreach ( $data['groups'] as $group ) {
-				self::assign_group( self::$controllers[ $controller ], $group );
+				self::assign_group( self::$pools[ $pool ], $group );
 			}
 		}
 	}

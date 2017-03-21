@@ -37,13 +37,6 @@ interface WPCacheItemPoolInterface extends CacheItemPoolInterface {
 	public function delete( $key, $args = null );
 
 	/**
-	 * Removes all cache items.
-	 *
-	 * @return bool False on failure, true on success
-	 */
-	public function flush( $args = null );
-
-	/**
 	 * Retrieves the cache contents from the cache by key and group.
 	 *
 	 * @param int|string $key The key under which the cache contents are stored.
