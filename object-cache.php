@@ -4,10 +4,9 @@
  * Bootstrap for Object Cache implementations
  */
 
-// @todo add autoloader for classes and controllers
-require_once 'classes/object-cache-controller-interface.php';
-require_once 'classes/object-cache-controller-implementation-interface.php';
-require_once 'classes/object-cache-key-controller.php';
-require_once 'classes/object-cache-manager.php';
+// @todo add autoloader for src and controllers
+require_once 'src/WordPress/Cache/WPCacheItemPoolInterface.php';
+require_once 'src/WordPress/Cache/WPCacheItemKeyContoller.php';
+require_once 'src/WordPress/Cache/Manager.php';
 
-require_once 'includes/api.php';
+require_once 'src/api.php';

@@ -28,7 +28,11 @@ function wp_cache_init() {
 function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
 	$object_cache = Object_Cache_Manager::get_controller( $group );
 
-	return $object_cache->add( $key, $data, (int) $expire );
+	$args = array(
+		'expire' => (int) $expire
+	);
+
+	return $object_cache->add( $key, $data, $args );
 }
 
 /**
@@ -160,7 +164,11 @@ function wp_cache_incr( $key, $offset = 1, $group = '' ) {
 function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
 	$object_cache = Object_Cache_Manager::get_controller( $group );
 
-	return $object_cache->replace( $key, $data, (int) $expire );
+	$args = array(
+		'expire' => (int) $expire
+	);
+
+	return $object_cache->replace( $key, $data, $args );
 }
 
 /**
@@ -180,7 +188,11 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
 function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
 	$object_cache = Object_Cache_Manager::get_controller( $group );
 
-	return $object_cache->set( $key, $data, (int) $expire );
+	$args = array(
+		'expire' => (int) $expire
+	);
+
+	return $object_cache->set( $key, $data, $args );
 }
 
 /**

@@ -1,7 +1,12 @@
 <?php
 
-class Memcache_Controller implements Object_Cache_Controller_Implementation_Interface {
-	protected $config;
+namespace WordPress\Cache\Pool;
+
+use WordPress\Cache\WPCacheItemPoolInterface;
+
+class NonPersistent implements WPCacheItemPoolInterface {
+	/** @var array Stores the non-persistent data */
+	protected $store = array();
 
 	/**
 	 * Object_Cache_Controller_Implementation_Interface constructor.
@@ -9,11 +14,10 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 * @param array $config
 	 */
 	public function __construct( $config ) {
-		$this->config = $config;
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key does not already exist.
+	 * Adds data to the cache, if the cache key doesn't already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.
@@ -22,8 +26,14 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
-	public function add( $key, $data, $expire ) {
-		// TODO: Implement add() method.
+	public function add( $key, $data, $args = null ) {
+		if ( array_key_exists( $key, $this->store ) ) {
+			return false;
+		}
+
+		$this->store[ $key ] = $data;
+
+		return true;
 	}
 
 	/**
@@ -34,8 +44,13 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function decrease( $key, $offset ) {
-		// TODO: Implement decrease() method.
+	public function decrease( $key, $offset, $args = null ) {
+		if ( ! isset( $this->store[ $key ] ) ) {
+			$this->store[ $key ] = 0;
+		}
+		$this->store[ $key ] -= $offset;
+
+		return $this->store[ $key ];
 	}
 
 	/**
@@ -45,8 +60,10 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return bool True on successful removal, false on failure.
 	 */
-	public function delete( $key ) {
-		// TODO: Implement delete() method.
+	public function delete( $key, $args = null ) {
+		unset( $this->store[ $key ] );
+
+		return true;
 	}
 
 	/**
@@ -54,8 +71,10 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush() {
-		// TODO: Implement flush() method.
+	public function flush( $args = null ) {
+		$this->store = array();
+
+		return true;
 	}
 
 	/**
@@ -70,8 +89,16 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 * @return bool|mixed False on failure to retrieve contents or the cache
 	 *                      contents on success
 	 */
-	public function get( $key, $force = false, &$found = null ) {
-		// TODO: Implement get() method.
+	public function get( $key, $force = false, &$found = null, $args = null ) {
+		if ( array_key_exists( $key, $this->store ) ) {
+			$found = true;
+
+			return $this->store[ $key ];
+		}
+
+		$found = false;
+
+		return null;
 	}
 
 	/**
@@ -82,8 +109,14 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function increase( $key, $offset = 1 ) {
-		// TODO: Implement increase() method.
+	public function increase( $key, $offset = 1, $args = null ) {
+		if ( ! isset( $this->store[ $key ] ) ) {
+			$this->store[ $key ] = 0;
+		}
+
+		$this->store[ $key ] += $offset;
+
+		return $this->store[ $key ];
 	}
 
 	/**
@@ -96,8 +129,14 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
-	public function replace( $key, $data, $expire = 0 ) {
-		// TODO: Implement replace() method.
+	public function replace( $key, $data, $args = null ) {
+		if ( ! array_key_exists( $key, $this->store ) ) {
+			return false;
+		}
+
+		$this->store[ $key ] = $data;
+
+		return true;
 	}
 
 	/**
@@ -113,7 +152,9 @@ class Memcache_Controller implements Object_Cache_Controller_Implementation_Inte
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function set( $key, $data, $expire = 0 ) {
-		// TODO: Implement set() method.
+	public function set( $key, $data, $args = null ) {
+		$this->store[ $key ] = $data;
+
+		return true;
 	}
 }

@@ -1,19 +1,48 @@
 <?php
 
-class Redis_Controller implements Object_Cache_Controller_Implementation_Interface {
-	protected $config;
+namespace WordPress\Cache;
+
+/**
+ * Class Object_Cache_Key_Controller
+ *
+ * Proxy class to easily format the key for any request
+ */
+class WPCacheItemKeyContoller implements WPCacheItemPoolInterface {
+	/** @var WPCacheItemPoolInterface Pool */
+	protected $controller;
+	/** @var string Group */
+	protected $group;
 
 	/**
-	 * Object_Cache_Controller_Implementation_Interface constructor.
+	 * Object_Cache_Key_Controller constructor.
 	 *
-	 * @param array $config
+	 * @param WPCacheItemPoolInterface $controller
+	 * @param string $group The group that is being requested
 	 */
-	public function __construct( $config ) {
-		$this->config = $config;
+	public function __construct( WPCacheItemPoolInterface $controller, $group ) {
+		$this->controller = $controller;
+		$this->group      = $group;
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key doesn't already exist.
+	 * Builds the unique cache key for the contextual request.
+	 *
+	 * @param string $key The requested key.
+	 *
+	 * @return string
+	 */
+	protected function get_key( $key ) {
+		$prefix = '';
+
+		if ( ! empty( $this->group ) ) {
+			$prefix = $this->group . ':';
+		}
+
+		return sprintf( Manager::get_key_format(), $prefix . $key );
+	}
+
+	/**
+	 * Adds data to the cache, if the cache key does not already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.
@@ -22,8 +51,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
-	public function add( $key, $data, $expire ) {
-		// TODO: Implement add() method.
+	public function add( $key, $data, $args = null ) {
+		return $this->controller->add( $this->get_key( $key ), $data, $args );
 	}
 
 	/**
@@ -34,8 +63,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function decrease( $key, $offset ) {
-		// TODO: Implement decrease() method.
+	public function decrease( $key, $offset, $args = null ) {
+		return $this->controller->decrease( $this->get_key( $key ), $offset, $args );
 	}
 
 	/**
@@ -45,8 +74,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return bool True on successful removal, false on failure.
 	 */
-	public function delete( $key ) {
-		// TODO: Implement delete() method.
+	public function delete( $key, $args = null ) {
+		return $this->controller->delete( $this->get_key( $key ), $args );
 	}
 
 	/**
@@ -54,8 +83,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush() {
-		// TODO: Implement flush() method.
+	public function flush( $args = null ) {
+		return $this->controller->flush( $args );
 	}
 
 	/**
@@ -70,8 +99,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 * @return bool|mixed False on failure to retrieve contents or the cache
 	 *                      contents on success
 	 */
-	public function get( $key, $force = false, &$found = null ) {
-		// TODO: Implement get() method.
+	public function get( $key, $force = false, &$found = null, $args = null ) {
+		return $this->controller->get( $this->get_key( $key ), $force, $found, $args );
 	}
 
 	/**
@@ -82,8 +111,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function increase( $key, $offset = 1 ) {
-		// TODO: Implement increase() method.
+	public function increase( $key, $offset = 1, $args = null ) {
+		return $this->controller->increase( $this->get_key( $key ), $offset, $args );
 	}
 
 	/**
@@ -96,8 +125,8 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
-	public function replace( $key, $data, $expire = 0 ) {
-		// TODO: Implement replace() method.
+	public function replace( $key, $data, $args = null ) {
+		return $this->controller->replace( $this->get_key( $key ), $data, $args );
 	}
 
 	/**
@@ -113,7 +142,7 @@ class Redis_Controller implements Object_Cache_Controller_Implementation_Interfa
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function set( $key, $data, $expire = 0 ) {
-		// TODO: Implement set() method.
+	public function set( $key, $data, $args = null ) {
+		return $this->controller->set( $this->get_key( $key ), $data, $args );
 	}
 }

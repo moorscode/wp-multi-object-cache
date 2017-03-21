@@ -1,6 +1,11 @@
 <?php
 
-class Null_Controller implements Object_Cache_Controller_Implementation_Interface {
+namespace WordPress\Cache\Pool;
+
+use WordPress\Cache\WPCacheItemPoolInterface;
+
+class Redis implements WPCacheItemPoolInterface {
+	protected $config;
 
 	/**
 	 * Object_Cache_Controller_Implementation_Interface constructor.
@@ -8,6 +13,7 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 * @param array $config
 	 */
 	public function __construct( $config ) {
+		$this->config = $config;
 	}
 
 	/**
@@ -20,8 +26,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
-	public function add( $key, $data, $expire ) {
-		return false;
+	public function add( $key, $data, $args = null ) {
+		// TODO: Implement add() method.
 	}
 
 	/**
@@ -32,8 +38,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function decrease( $key, $offset ) {
-		return false;
+	public function decrease( $key, $offset, $args = null ) {
+		// TODO: Implement decrease() method.
 	}
 
 	/**
@@ -43,8 +49,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return bool True on successful removal, false on failure.
 	 */
-	public function delete( $key ) {
-		return true;
+	public function delete( $key, $args = null ) {
+		// TODO: Implement delete() method.
 	}
 
 	/**
@@ -52,8 +58,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush() {
-		return true;
+	public function flush($args = null) {
+		// TODO: Implement flush() method.
 	}
 
 	/**
@@ -68,10 +74,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 * @return bool|mixed False on failure to retrieve contents or the cache
 	 *                      contents on success
 	 */
-	public function get( $key, $force = false, &$found = null ) {
-		$found = false;
-
-		return null;
+	public function get( $key, $force = false, &$found = null, $args = null ) {
+		// TODO: Implement get() method.
 	}
 
 	/**
@@ -82,8 +86,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function increase( $key, $offset = 1 ) {
-		return false;
+	public function increase( $key, $offset = 1, $args = null ) {
+		// TODO: Implement increase() method.
 	}
 
 	/**
@@ -96,8 +100,8 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
-	public function replace( $key, $data, $expire = 0 ) {
-		return false;
+	public function replace( $key, $data, $args = null ) {
+		// TODO: Implement replace() method.
 	}
 
 	/**
@@ -113,7 +117,7 @@ class Null_Controller implements Object_Cache_Controller_Implementation_Interfac
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function set( $key, $data, $expire = 0 ) {
-		return false;
+	public function set( $key, $data, $args = null ) {
+		// TODO: Implement set() method.
 	}
 }

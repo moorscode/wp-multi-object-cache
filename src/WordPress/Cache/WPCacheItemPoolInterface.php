@@ -1,46 +1,12 @@
 <?php
 
-/**
- * Class Object_Cache_Key_Controller
- *
- * Proxy class to easily format the key for any request
- */
-class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
-	/** @var Object_Cache_Controller_Interface Controller */
-	protected $controller;
-	/** @var string Group */
-	protected $group;
+namespace WordPress\Cache;
 
+use Psr\Cache\CacheItemPoolInterface;
+
+interface WPCacheItemPoolInterface extends CacheItemPoolInterface {
 	/**
-	 * Object_Cache_Key_Controller constructor.
-	 *
-	 * @param Object_Cache_Controller_Interface $controller
-	 * @param string $group The group that is being requested
-	 */
-	public function __construct( Object_Cache_Controller_Interface $controller, $group ) {
-		$this->controller = $controller;
-		$this->group      = $group;
-	}
-
-	/**
-	 * Builds the unique cache key for the contextual request.
-	 *
-	 * @param string $key The requested key.
-	 *
-	 * @return string
-	 */
-	protected function get_key( $key ) {
-		$prefix = '';
-
-		if ( ! empty( $this->group ) ) {
-			$prefix = $this->group . ':';
-		}
-
-		return sprintf( Object_Cache_Manager::get_key_format(), $prefix . $key );
-	}
-
-	/**
-	 * Adds data to the cache, if the cache key does not already exist.
+	 * Adds data to the cache, if the cache key doesn't already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.
@@ -49,9 +15,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
-	public function add( $key, $data, $expire ) {
-		return $this->controller->add( $this->get_key( $key ), $data, $expire );
-	}
+	public function add( $key, $data, $args = null );
 
 	/**
 	 * Decrements numeric cache item's value.
@@ -61,9 +25,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function decrease( $key, $offset ) {
-		return $this->controller->decrease( $this->get_key( $key ), $offset );
-	}
+	public function decrease( $key, $offset, $args = null );
 
 	/**
 	 * Removes the cache contents matching key and group.
@@ -72,18 +34,14 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return bool True on successful removal, false on failure.
 	 */
-	public function delete( $key ) {
-		return $this->controller->delete( $this->get_key( $key ) );
-	}
+	public function delete( $key, $args = null );
 
 	/**
 	 * Removes all cache items.
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush() {
-		return $this->controller->flush();
-	}
+	public function flush( $args = null );
 
 	/**
 	 * Retrieves the cache contents from the cache by key and group.
@@ -97,9 +55,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 * @return bool|mixed False on failure to retrieve contents or the cache
 	 *                      contents on success
 	 */
-	public function get( $key, $force = false, &$found = null ) {
-		return $this->controller->get( $this->get_key( $key ), $force, $found );
-	}
+	public function get( $key, $force = false, &$found = null, $args = null );
 
 	/**
 	 * Increment numeric cache item's value
@@ -109,9 +65,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function increase( $key, $offset = 1 ) {
-		return $this->controller->increase( $this->get_key( $key ), $offset );
-	}
+	public function increase( $key, $offset = 1, $args = null );
 
 	/**
 	 * Replaces the contents of the cache with new data.
@@ -123,9 +77,7 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
-	public function replace( $key, $data, $expire = 0 ) {
-		return $this->controller->replace( $this->get_key( $key ), $data, $expire );
-	}
+	public function replace( $key, $data, $args = null );
 
 	/**
 	 * Saves the data to the cache.
@@ -140,7 +92,5 @@ class Object_Cache_Key_Controller implements Object_Cache_Controller_Interface {
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function set( $key, $data, $expire = 0 ) {
-		return $this->controller->set( $this->get_key( $key ), $data, $expire );
-	}
+	public function set( $key, $data, $args = null );
 }

@@ -1,16 +1,22 @@
 <?php
 
-class Object_Cache_Manager {
+namespace WordPress\Cache;
+
+use WordPress\Cache\Pool\Null;
+
+class Manager {
 	/** @var array */
 	protected static $group_aliases = array();
 	/** @var  array */
 	protected static $controllers = array();
 	/** @var array */
 	protected static $controller_groups = array();
-
 	/** @var int Blog ID */
 	protected static $blog_id;
 
+	/**
+	 * Initializes the manager.
+	 */
 	public static function initialize() {
 		if ( ! defined( 'WP_CACHE_KEY_SALT' ) ) {
 			define( 'WP_CACHE_KEY_SALT', '' );
@@ -44,7 +50,7 @@ class Object_Cache_Manager {
 						'site-transient'
 					),
 				),
-				// Use Non Persistent Controller.
+				// Use Non Persistent Pool.
 				'Non_Persistent_Controller' => array(
 					'data'   => array(
 						'config' => array()
@@ -61,24 +67,28 @@ class Object_Cache_Manager {
 	}
 
 	/**
-	 * @param Object_Cache_Controller_Interface $controller
+	 * @param WPCacheItemPoolInterface $controller
 	 * @param string $group
 	 */
-	public static function assign_group( Object_Cache_Controller_Interface $controller, $group ) {
+	public static function assign_group( WPCacheItemPoolInterface $controller, $group ) {
 		self::$controller_groups[ $group ] = $controller;
 	}
 
 	/**
-	 * @return Object_Cache_Controller_Implementation_Interface[] All the controllers
+	 * Gets all registered controllers.
+	 *
+	 * @return WPCacheItemPoolInterface[]
 	 */
 	public static function get_controllers() {
 		return self::$controllers;
 	}
 
 	/**
-	 * @param string $group
+	 * Gets the controller for a group.
 	 *
-	 * @return Object_Cache_Controller_Interface
+	 * @param string $group Group to get controller for.
+	 *
+	 * @return WPCacheItemKeyContoller
 	 */
 	public static function get_controller( $group = '' ) {
 		$use_group = $group;
@@ -86,17 +96,17 @@ class Object_Cache_Manager {
 			$use_group = self::$group_aliases[ $use_group ];
 		}
 
-		$controller = new Null_Controller( array() );
+		$controller = new Null( array() );
 		if ( isset( self::$controller_groups[ $use_group ] ) ) {
 			$controller = self::$controller_groups[ $use_group ];
 		}
 
-		// Create a new Key Controller with initial group name.
-		return new Object_Cache_Key_Controller( $controller, $group );
+		// Create a new Key Pool with initial group name.
+		return new WPCacheItemKeyContoller( $controller, $group );
 	}
 
 	/**
-	 * Switch to a different blog_id.
+	 * Switches to a specific blog_id.
 	 *
 	 * @param int $blog_id Blog to switch to.
 	 */
@@ -160,14 +170,14 @@ class Object_Cache_Manager {
 	 *
 	 * @param array $controllers List of controllers to load.
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	protected static function register_controllers( $controllers ) {
 		// Register controllers.
 		foreach ( $controllers as $controller => $data ) {
 			if ( ! class_exists( $controller ) ) {
 				// Throw exception.
-				throw new Exception( 'Class ' . $controller . ' not found while loading Object Cache Controllers.' );
+				throw new \Exception( 'Class ' . $controller . ' not found while loading Object Cache Controllers.' );
 			}
 
 			self::$controllers[ $controller ] = new $controller( $data['config'] );

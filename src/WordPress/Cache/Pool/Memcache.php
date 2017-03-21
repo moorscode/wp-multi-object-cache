@@ -1,8 +1,11 @@
 <?php
 
-class Non_Persistent_Controller implements Object_Cache_Controller_Implementation_Interface {
-	/** @var array Stores the non-persistent data */
-	protected $store = array();
+namespace WordPress\Cache\Pool;
+
+use WordPress\Cache\WPCacheItemPoolInterface;
+
+class Memcache implements WPCacheItemPoolInterface {
+	protected $config;
 
 	/**
 	 * Object_Cache_Controller_Implementation_Interface constructor.
@@ -10,10 +13,11 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 * @param array $config
 	 */
 	public function __construct( $config ) {
+		$this->config = $config;
 	}
 
 	/**
-	 * Adds data to the cache, if the cache key doesn't already exist.
+	 * Adds data to the cache, if the cache key does not already exist.
 	 *
 	 * @param int|string $key The cache key to use for retrieval later.
 	 * @param mixed $data The data to add to the cache.
@@ -22,14 +26,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return bool False if cache key and group already exist, true on success.
 	 */
-	public function add( $key, $data, $expire ) {
-		if ( array_key_exists( $key, $this->store ) ) {
-			return false;
-		}
-
-		$this->store[ $key ] = $data;
-
-		return true;
+	public function add( $key, $data, $args = null ) {
+		// TODO: Implement add() method.
 	}
 
 	/**
@@ -40,13 +38,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function decrease( $key, $offset ) {
-		if ( ! isset( $this->store[ $key ] ) ) {
-			$this->store[ $key ] = 0;
-		}
-		$this->store[ $key ] -= $offset;
-
-		return $this->store[ $key ];
+	public function decrease( $key, $offset, $args = null ) {
+		// TODO: Implement decrease() method.
 	}
 
 	/**
@@ -56,10 +49,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return bool True on successful removal, false on failure.
 	 */
-	public function delete( $key ) {
-		unset( $this->store[ $key ] );
-
-		return true;
+	public function delete( $key, $args = null ) {
+		// TODO: Implement delete() method.
 	}
 
 	/**
@@ -67,10 +58,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function flush() {
-		$this->store = array();
-
-		return true;
+	public function flush( $args = null ) {
+		// TODO: Implement flush() method.
 	}
 
 	/**
@@ -85,16 +74,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 * @return bool|mixed False on failure to retrieve contents or the cache
 	 *                      contents on success
 	 */
-	public function get( $key, $force = false, &$found = null ) {
-		if ( array_key_exists( $key, $this->store ) ) {
-			$found = true;
-
-			return $this->store[ $key ];
-		}
-
-		$found = false;
-
-		return null;
+	public function get( $key, $force = false, &$found = null, $args = null ) {
+		// TODO: Implement get() method.
 	}
 
 	/**
@@ -105,14 +86,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return false|int False on failure, the item's new value on success.
 	 */
-	public function increase( $key, $offset = 1 ) {
-		if ( ! isset( $this->store[ $key ] ) ) {
-			$this->store[ $key ] = 0;
-		}
-
-		$this->store[ $key ] += $offset;
-
-		return $this->store[ $key ];
+	public function increase( $key, $offset = 1, $args = null ) {
+		// TODO: Implement increase() method.
 	}
 
 	/**
@@ -125,14 +100,8 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return bool False if original value does not exist, true if contents were replaced
 	 */
-	public function replace( $key, $data, $expire = 0 ) {
-		if ( ! array_key_exists( $key, $this->store ) ) {
-			return false;
-		}
-
-		$this->store[ $key ] = $data;
-
-		return true;
+	public function replace( $key, $data, $args = null ) {
+		// TODO: Implement replace() method.
 	}
 
 	/**
@@ -148,9 +117,7 @@ class Non_Persistent_Controller implements Object_Cache_Controller_Implementatio
 	 *
 	 * @return bool False on failure, true on success
 	 */
-	public function set( $key, $data, $expire = 0 ) {
-		$this->store[ $key ] = $data;
-
-		return true;
+	public function set( $key, $data, $args = null ) {
+		// TODO: Implement set() method.
 	}
 }
