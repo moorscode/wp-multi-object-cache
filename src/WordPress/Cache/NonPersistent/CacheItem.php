@@ -5,7 +5,7 @@ namespace WordPress\Cache\NonPersistent;
 use Psr\Cache\CacheItemInterface;
 
 class CacheItem implements CacheItemInterface {
-	protected $hit = 0;
+	protected $hit = false;
 	protected $value;
 	protected $key;
 
@@ -44,7 +44,10 @@ class CacheItem implements CacheItemInterface {
 	 *   The value corresponding to this cache item's key, or null if not found.
 	 */
 	public function get() {
-		++ $this->hit;
+		if ( ! $this->hit ) {
+			return null;
+		}
+
 		return $this->value;
 	}
 
@@ -58,7 +61,7 @@ class CacheItem implements CacheItemInterface {
 	 *   True if the request resulted in a cache hit. False otherwise.
 	 */
 	public function isHit() {
-		return $this->hit > 0;
+		return $this->hit;
 	}
 
 	/**
@@ -76,6 +79,8 @@ class CacheItem implements CacheItemInterface {
 	 */
 	public function set( $value ) {
 		$this->value = $value;
+		$this->hit   = true;
+
 		return $this;
 	}
 
