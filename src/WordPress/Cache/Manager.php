@@ -2,85 +2,60 @@
 
 namespace WordPress\Cache;
 
-use WordPress\Cache\Pool\Null;
+use Psr\Cache\CacheItemPoolInterface;
 
 class Manager {
-	/** @var array */
-	protected static $group_aliases = array();
-	/** @var  array */
-	protected static $pools = array();
-	/** @var array */
-	protected static $pool_groups = array();
-	/** @var int Blog ID */
-	protected static $blog_id;
+	/** @var PoolManager Pool Manager */
+	protected static $pool_manager;
+
+	/** @var CurrentBlogManager Blog Manager */
+	protected static $blog_manager;
+
+	/** @var GroupManager Group Manager */
+	protected static $group_manager;
+
+	/** @var KeyFormat $key_format */
+	protected static $key_format;
+
+	/** @var PoolGroupConnector Pool Group Connector */
+	protected static $pool_group_connector;
 
 	/**
 	 * Initializes the manager.
+	 *
+	 * @throws \Exception
 	 */
 	public static function initialize() {
 		if ( ! defined( 'WP_CACHE_KEY_SALT' ) ) {
 			define( 'WP_CACHE_KEY_SALT', '' );
 		}
 
-		// @todo extract configuration
-		// read configuration
-		$config = array(
-			'pools' => array(
-				// Default/fallback controller.
-				'\WordPress\Cache\Pool\Redis'         => array(
-					'data'   => array(
-						'config' => array(
-							'ip'   => '127.0.0.1',
-							'port' => '1112'
-						)
-					),
-					'groups' => array(
-						''
-					)
-				),
-				// Use Memcached controller for transients.
-				'\WordPress\Cache\Pool\Memcache'      => array(
-					'data'   => array(
-						'config' => array(
-							'ip'   => '127.0.0.1',
-							'port' => '1112'
-						)
-					),
-					'groups' => array(
-						'site-transient'
-					),
-				),
-				// Use Non Persistent Pool.
-				'\WordPress\Cache\Pool\NonPersistent' => array(
-					'data'   => array(
-						'config' => array()
-					),
-					'groups' => array(
-						'non-persistent'
-					),
-				),
-			)
-		);
+		self::$group_manager = new GroupManager();
+		self::$pool_group_connector = new PoolGroupConnector( self::$group_manager );
 
-		self::switch_to_blog( get_current_blog_id() );
-		self::register_pools( $config['pools'] );
+		self::$pool_manager = new PoolManager( self::$pool_group_connector );
+		self::$pool_manager->initialize();
+
+		self::$blog_manager = new CurrentBlogManager( get_current_blog_id() );
+
+		self::$key_format = new KeyFormat();
 	}
 
 	/**
-	 * @param WPCacheItemPoolInterface $pool
-	 * @param string $group
+	 * @param CacheItemPoolInterface $pool
+	 * @param string                 $group
 	 */
-	public static function assign_group( WPCacheItemPoolInterface $pool, $group ) {
-		self::$pool_groups[ $group ] = $pool;
+	public static function assign_group( CacheItemPoolInterface $pool, $group ) {
+		self::$pool_group_connector->add( $pool, $group );
 	}
 
 	/**
 	 * Gets all registered pools.
 	 *
-	 * @return WPCacheItemPoolInterface[]
+	 * @return CacheItemPoolInterface[]
 	 */
 	public static function get_pools() {
-		return self::$pools;
+		return self::$pool_manager->get_pools();
 	}
 
 	/**
@@ -88,21 +63,10 @@ class Manager {
 	 *
 	 * @param string $group Group to get controller for.
 	 *
-	 * @return WPCacheItemKeyContoller
+	 * @return CacheInterface
 	 */
-	public static function get_controller( $group = '' ) {
-		$use_group = $group;
-		if ( isset( self::$group_aliases[ $group ] ) ) {
-			$use_group = self::$group_aliases[ $use_group ];
-		}
-
-		$pool = new Null( array() );
-		if ( isset( self::$pool_groups[ $use_group ] ) ) {
-			$pool = self::$pool_groups[ $use_group ];
-		}
-
-		// Create a new Key Pool with initial group name.
-		return new WPCacheItemKeyContoller( $pool, $group );
+	public static function get_pool( $group = '' ) {
+		return self::$pool_manager->get( $group );
 	}
 
 	/**
@@ -111,7 +75,14 @@ class Manager {
 	 * @param int $blog_id Blog to switch to.
 	 */
 	public static function switch_to_blog( $blog_id ) {
-		self::$blog_id = $blog_id;
+		self::$blog_manager->switch_to_blog( $blog_id );
+	}
+
+	/**
+	 * @return int
+	 */
+	public static function get_blog_id() {
+		return self::$blog_manager->get_blog_id();
 	}
 
 	/**
@@ -119,32 +90,11 @@ class Manager {
 	 *
 	 * @param string $group Group to add an alias for.
 	 * @param string $alias Alias of the group.
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	public static function add_group_alias( $group, $alias ) {
-		/**
-		 * @todo decide
-		 * Use a filter instead?
-		 * + Group Alias manager?
-		 */
-		self::$group_aliases[ $group ] = $alias;
-	}
-
-	/**
-	 * Determines if we are in a multi-site environment.
-	 *
-	 * @return bool
-	 */
-	private static function is_multisite() {
-		static $multisite;
-
-		if ( null === $multisite ) {
-			$multisite = false;
-			if ( function_exists( 'is_multisite' ) ) {
-				$multisite = is_multisite();
-			}
-		}
-
-		return $multisite;
+		self::$group_manager->add_alias( $group, $alias );
 	}
 
 	/**
@@ -153,37 +103,6 @@ class Manager {
 	 * @return string
 	 */
 	public static function get_key_format() {
-		global $table_prefix;
-
-		// Allow for multiple sites to use the same Object Cache.
-		$key_format = $table_prefix . ':%s';
-
-		if ( self::is_multisite() ) {
-			$key_format = self::$blog_id . ':%s';
-		}
-
-		return WP_CACHE_KEY_SALT . $key_format;
-	}
-
-	/**
-	 * Registers the pools for the groups they specified.
-	 *
-	 * @param array $pools List of pools to load.
-	 *
-	 * @throws \Exception
-	 */
-	protected static function register_pools( $pools ) {
-		// Register pools.
-		foreach ( $pools as $pool => $data ) {
-			if ( ! class_exists( $pool ) ) {
-				// Throw exception.
-				throw new \Exception( 'Class ' . $pool . ' not found while loading Object Cache pools.' );
-			}
-
-			self::$pools[ $pool ] = new $pool( $data['config'] );
-			foreach ( $data['groups'] as $group ) {
-				self::assign_group( self::$pools[ $pool ], $group );
-			}
-		}
+		return self::$key_format->get();
 	}
 }
