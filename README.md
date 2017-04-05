@@ -6,4 +6,4 @@ This has not been tested or finalized yet.
 
 ## Requirements
 - Composer
-- PHP 5.6
+- PHP 5.4

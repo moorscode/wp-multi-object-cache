@@ -11,7 +11,7 @@ matrix:
   include:
     - php: 7.0
       env: PHPLINT=1
-    - php: 5.3
+    - php: 5.4
       env: PHPLINT=1
 
 cache:
