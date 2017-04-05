@@ -1,6 +1,6 @@
 <?php
 
-namespace WordPress\Cache\Memcache;
+namespace WordPress\Cache\Memcached;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;

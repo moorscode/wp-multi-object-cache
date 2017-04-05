@@ -21,43 +21,9 @@ class PoolManager {
 	 * @throws \Exception
 	 */
 	public function initialize() {
-		// @todo extract configuration
-		// read configuration
-		$config = array(
-			'pools' => array(
-				// Default/fallback controller.
-				'\WordPress\Cache\Pool\Redis'         => array(
-					'config' => array(
-						'servers' => array(
-							'ip'   => '127.0.0.1',
-							'port' => '1112'
-						),
-					),
-					'groups' => array(
-						''
-					)
-				),
-				// Use Memcached controller for transients.
-				'\WordPress\Cache\Pool\Memcache'      => array(
-					'config' => array(
-						'servers' => array(
-							'ip'   => '127.0.0.1',
-							'port' => '1112'
-						),
-					),
-					'groups' => array(
-						'site-transient'
-					),
-				),
-				// Use Non Persistent Pool.
-				'\WordPress\Cache\Pool\NonPersistent' => array(
-					'groups' => array(
-						'non-persistent'
-					),
-				),
-			)
-		);
+		require_once OBJECT_CACHE_PATH . '/object-cache.config.php';
 
+		/** @var array $config */
 		$this->register_pools( $config['pools'] );
 	}
 
@@ -101,40 +67,82 @@ class PoolManager {
 	/**
 	 * Registers a pool.
 	 *
-	 * @param string $pool Class name of the Pool to register.
-	 * @param array  $data Configuration to use on the pool.
+	 * @param string $pool_class Class name of the Pool to register.
+	 * @param array $data Configuration to use on the pool.
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function register_pool( $pool, $data ) {
-		if ( ! class_exists( $pool ) ) {
-			// Throw exception.
-			throw new \InvalidArgumentException( sprintf( 'Class %s not found while loading Object Cache pools.', $pool ) );
+	protected function register_pool( $pool_class, $data ) {
+		if ( ! class_exists( $pool_class ) ) {
+			throw new \InvalidArgumentException( sprintf( 'Class %s not found while loading Object Cache pools.',
+				$pool_class ) );
 		}
 
-		if ( empty( $data['groups'] ) ) {
-			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.', $pool ) );
+		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
+			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
+				$pool_class ) );
 		}
 
-		$args = ( isset( $data['config'] ) ? $data['config'] : null );
-
-		$this->pools[ $pool ] = $this->get_pool_instance( $pool, $args );
+		if ( $this->check_prerequisites( $data['prerequisites'] ) ) {
+			$args                       = ( isset( $data['config'] ) ? $data['config'] : null );
+			$this->pools[ $pool_class ] = $this->get_pool_instance( $pool_class, $args );
+		} else {
+			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
+		}
 
 		foreach ( $data['groups'] as $group ) {
-			$this->pool_group_connector->add( $this->pools[ $pool ], $group );
+			$this->pool_group_connector->add( $this->pools[ $pool_class ], $group );
 		}
+	}
+
+	/**
+	 * Checks for all prerequisites
+	 *
+	 * @param array $prerequisites Prerequisites to check.
+	 *
+	 * @return bool
+	 */
+	protected function check_prerequisites( array $prerequisites = array() ) {
+		$met = true;
+
+		foreach ( $prerequisites as $prerequisite ) {
+			switch ( $prerequisite ) {
+				case 'class':
+					$met = class_exists( $prerequisite ) && $met;
+					if ( ! $met ) {
+						return false;
+					}
+					break;
+				case 'function':
+					$met = function_exists( $prerequisite ) && $met;
+					if ( ! $met ) {
+						return false;
+					}
+					break;
+			}
+		}
+
+		return $met;
 	}
 
 	/**
 	 * Gets the Pool instance.
 	 *
 	 * @param string $pool Class name of the pool to instance.
-	 * @param array  $args Optional. Class arguments.
+	 * @param array $args Optional. Class arguments.
 	 *
 	 * @return object
+	 *
+	 * @throws \InvalidArgumentException
 	 */
 	protected function get_pool_instance( $pool, $args = null ) {
 		$reflection_class = new ReflectionClass( $pool );
+
+		$interfaces = $reflection_class->getInterfaceNames();
+		if ( ! in_array( CacheItemPoolInterface::class, $interfaces ) ) {
+			throw new \InvalidArgumentException( sprintf( 'Every pool needs to be extending the %s interface.',
+				CacheItemPoolInterface::class ) );
+		}
 
 		if ( null !== $args ) {
 			return $reflection_class->newInstanceArgs( $args );
