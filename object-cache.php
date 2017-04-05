@@ -1,13 +1,10 @@
 <?php
-
 /**
  * Bootstrap for Object Cache implementations
+ *
+ * Place this file at /wp-content/object-cache.php
+ * Either by coping, symlinking or moving the file.
  */
 
-// @todo add autoloader for classes and controllers
-require_once 'classes/object-cache-controller-interface.php';
-require_once 'classes/object-cache-controller-implementation-interface.php';
-require_once 'classes/object-cache-key-controller.php';
-require_once 'classes/object-cache-manager.php';
-
-require_once 'includes/api.php';
+require_once 'mu-plugins/multi-object-cache/vendor/autoload.php';
+require_once 'mu-plugins/multi-object-cache/api.php';
