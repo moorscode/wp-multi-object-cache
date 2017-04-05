@@ -57,9 +57,7 @@ function wp_cache_close() {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_decr( $key, $offset = 1, $group = '' ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->decrease( $key, $offset );
+	return Manager::get_pool( $group )->decrease( $key, $offset );
 }
 
 /**
@@ -71,9 +69,7 @@ function wp_cache_decr( $key, $offset = 1, $group = '' ) {
  * @return bool True on successful removal, false on failure.
  */
 function wp_cache_delete( $key, $group = '' ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->delete( $key );
+	return Manager::get_pool( $group )->delete( $key );
 }
 
 /**
@@ -90,9 +86,7 @@ function wp_cache_flush( $group = null ) {
 	}
 
 	// Flush specific group.
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->flush();
+	return Manager::get_pool( $group )->clear();
 }
 
 /**
@@ -126,9 +120,7 @@ function wp_cache_flush_all() {
  *                      contents on success
  */
 function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->get( $key, $force, $found );
+	return Manager::get_pool( $group )->get( $key, $force, $found );
 }
 
 /**
@@ -141,9 +133,7 @@ function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_incr( $key, $offset = 1, $group = '' ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->increase( $key, $offset );
+	return Manager::get_pool( $group )->increase( $key, $offset );
 }
 
 /**
@@ -159,9 +149,7 @@ function wp_cache_incr( $key, $offset = 1, $group = '' ) {
  * @return bool False if original value does not exist, true if contents were replaced
  */
 function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->replace( $key, $data, $expire );
+	return Manager::get_pool( $group )->replace( $key, $data, $expire );
 }
 
 /**
@@ -179,9 +167,7 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
  * @return bool False on failure, true on success
  */
 function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Manager::get_pool( $group );
-
-	return $object_cache->set( $key, $data, $expire );
+	return Manager::get_pool( $group )->set( $key, $data, $expire );
 }
 
 /**

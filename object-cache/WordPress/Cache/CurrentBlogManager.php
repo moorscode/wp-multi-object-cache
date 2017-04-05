@@ -20,6 +20,8 @@ class CurrentBlogManager {
 	}
 
 	/**
+	 * Returns the current blog ID
+	 *
 	 * @return int
 	 */
 	public function get_blog_id() {

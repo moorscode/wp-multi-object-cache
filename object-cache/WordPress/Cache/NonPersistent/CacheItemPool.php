@@ -83,6 +83,8 @@ class CacheItemPool implements CacheItemPoolInterface {
 	 */
 	public function clear() {
 		$this->store = array();
+
+		return true;
 	}
 
 	/**

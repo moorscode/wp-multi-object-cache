@@ -199,7 +199,7 @@ class PSRCacheAdapter implements CacheInterface {
 
 		if ( $expire ) {
 			if ( $expire > YEAR_IN_SECONDS ) {
-				$item->expiresAt( $expire );
+				$item->expiresAt( new \DateTime( $expire ) );
 			} else {
 				$item->expiresAfter( $expire );
 			}
