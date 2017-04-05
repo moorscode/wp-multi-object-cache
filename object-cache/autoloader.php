@@ -3,7 +3,7 @@
 spl_autoload_register( function ( $class ) {
 	$namespaces = [
 		'\\Psr\\Cache\\',
-		'\\WordPress\\Cache\\'
+		'\\src\\Cache\\'
 	];
 
 	foreach ( $namespaces as $namespace ) {

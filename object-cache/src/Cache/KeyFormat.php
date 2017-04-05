@@ -1,6 +1,6 @@
 <?php
 
-namespace WordPress\Cache;
+namespace MultiObjectCache\Cache;
 
 class KeyFormat {
 	public function get() {

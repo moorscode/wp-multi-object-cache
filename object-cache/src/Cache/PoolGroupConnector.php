@@ -1,7 +1,9 @@
 <?php
 
-namespace WordPress\Cache;
+namespace MultiObjectCache\Cache;
 
+use Cache\Adapter\Common\AbstractCachePool;
+use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 
 class PoolGroupConnector {
@@ -31,7 +33,7 @@ class PoolGroupConnector {
 	 *
 	 * @param string $group Group to get Pool for.
 	 *
-	 * @return CacheItemPoolInterface
+	 * @return AbstractCachePool
 	 */
 	public function get_pool( $group ) {
 		$group = $this->group_manager->get( $group );
@@ -40,6 +42,6 @@ class PoolGroupConnector {
 			return $this->pool_groups[ $group ];
 		}
 
-		return new Null\CacheItemPool();
+		return new ArrayCachePool();
 	}
 }

@@ -1,12 +1,12 @@
 <?php
 
-namespace WordPress\Cache;
+namespace MultiObjectCache\Cache;
 
-use Psr\Cache\CacheItemPoolInterface;
+use Cache\Adapter\Common\AbstractCachePool;
 
 class PSRCacheAdapter implements CacheInterface {
 
-	/** @var CacheItemPoolInterface Pool to use */
+	/** @var AbstractCachePool Pool to use */
 	protected $pool;
 
 	/** @var string Group that was called for */
@@ -15,10 +15,10 @@ class PSRCacheAdapter implements CacheInterface {
 	/**
 	 * WPCachePSRAdapter constructor.
 	 *
-	 * @param CacheItemPoolInterface $pool
+	 * @param AbstractCachePool  $pool
 	 * @param string                 $group
 	 */
-	public function __construct( CacheItemPoolInterface $pool, $group ) {
+	public function __construct( AbstractCachePool $pool, $group ) {
 		$this->pool  = $pool;
 		$this->group = $group;
 	}
@@ -194,11 +194,21 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function set( $key, $data, $expire = 0 ) {
+		/*
+		 * Ensuring that wp_suspend_cache_addition is defined before calling, because sometimes an advanced-cache.php
+		 * file will load object-cache.php before wp-includes/functions.php is loaded. In those cases, if wp_cache_add
+		 * is called in advanced-cache.php before any more of src is loaded, we get a fatal error because
+		 * wp_suspend_cache_addition will not be defined until wp-includes/functions.php is loaded.
+		 */
+		if ( function_exists( 'wp_suspend_cache_addition' ) && wp_suspend_cache_addition() ) {
+			return false;
+		}
+
 		$item = $this->pool->getItem( $key );
 		$item->set( $data );
 
 		if ( $expire ) {
-			if ( $expire > YEAR_IN_SECONDS ) {
+			if ( $expire > DAY_IN_SECONDS * 30 ) {
 				$item->expiresAt( new \DateTime( $expire ) );
 			} else {
 				$item->expiresAfter( $expire );

@@ -3,7 +3,7 @@
 $config = [
 	'pools' => [
 		// Default/fallback controller.
-		'\WordPress\Cache\Redis\CacheItemPool'         => [
+		'Redis'     => [
 			'config'        => [
 				'servers' => [
 					'ip'   => '127.0.0.1',
@@ -18,7 +18,7 @@ $config = [
 			]
 		],
 		// Use Memcached controller for transients.
-		'\WordPress\Cache\Memcached\CacheItemPool'     => [
+		'Memcached' => [
 			'config'        => [
 				'servers' => [
 					'ip'   => '127.0.0.1',
@@ -33,7 +33,7 @@ $config = [
 			]
 		],
 		// Use Non Persistent Pool.
-		'\WordPress\Cache\NonPersistent\CacheItemPool' => [
+		'PHP'       => [
 			'groups' => [
 				'non-persistent'
 			],

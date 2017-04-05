@@ -1,6 +1,6 @@
 <?php
 
-namespace WordPress\Cache;
+namespace MultiObjectCache\Cache;
 
 class CurrentBlogManager {
 	/** @var int Blog ID */

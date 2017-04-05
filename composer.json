@@ -1,0 +1,15 @@
+{
+    "name": "moorscode/wp-multi-object-cache",
+    "description": "Object Cache allowing for multiple cache implementations",
+    "type": "wordpress-muplugin",
+    "require": {
+        "cache/cache": "^0.4.0"
+    },
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Jip Moors",
+            "email": "jhp.moors@gmail.com"
+        }
+    ]
+}

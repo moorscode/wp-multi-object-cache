@@ -5,7 +5,7 @@
  *
  * @subpackage Cache
  */
-use WordPress\Cache\Manager;
+use MultiObjectCache\Cache\Manager;
 
 /**
  * Sets up Object Cache Global and assigns it.
@@ -35,11 +35,11 @@ function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
 /**
  * Closes the cache.
  *
- * This function has ceased to do anything since WordPress 2.5. The
+ * This function has ceased to do anything since src 2.5. The
  * functionality was removed along with the rest of the persistent cache.
  *
  * This does not mean that plugins can't implement this function when they need
- * to make sure that the cache is cleaned up after WordPress no longer needs it.
+ * to make sure that the cache is cleaned up after src no longer needs it.
  *
  * @return true Always returns true.
  */

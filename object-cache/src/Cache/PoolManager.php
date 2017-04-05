@@ -1,6 +1,6 @@
 <?php
 
-namespace WordPress\Cache;
+namespace MultiObjectCache\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
 use ReflectionClass;
@@ -12,8 +12,12 @@ class PoolManager {
 	/** @var PoolGroupConnector Pool Group Connector */
 	protected $pool_group_connector;
 
-	public function __construct( PoolGroupConnector $pool_group_connector ) {
+	/** @var PoolFactory Pool Factory */
+	protected $pool_factory;
+
+	public function __construct( PoolGroupConnector $pool_group_connector, PoolFactory $pool_factory ) {
 		$this->pool_group_connector = $pool_group_connector;
+		$this->pool_factory = $pool_factory;
 	}
 
 	/**
@@ -67,31 +71,31 @@ class PoolManager {
 	/**
 	 * Registers a pool.
 	 *
-	 * @param string $pool_class Class name of the Pool to register.
+	 * @param string $pool_type Class name of the Pool to register.
 	 * @param array $data Configuration to use on the pool.
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function register_pool( $pool_class, $data ) {
-		if ( ! class_exists( $pool_class ) ) {
+	protected function register_pool( $pool_type, $data ) {
+		if ( ! class_exists( $pool_type ) ) {
 			throw new \InvalidArgumentException( sprintf( 'Class %s not found while loading Object Cache pools.',
-				$pool_class ) );
+				$pool_type ) );
 		}
 
 		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
 			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
-				$pool_class ) );
+				$pool_type ) );
 		}
 
 		if ( $this->check_prerequisites( $data['prerequisites'] ) ) {
-			$args                       = ( isset( $data['config'] ) ? $data['config'] : null );
-			$this->pools[ $pool_class ] = $this->get_pool_instance( $pool_class, $args );
+			$args                      = ( isset( $data['config'] ) ? $data['config'] : null );
+			$this->pools[ $pool_type ] = $this->pool_factory->get( $pool_type, $args );
 		} else {
 			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
 		}
 
 		foreach ( $data['groups'] as $group ) {
-			$this->pool_group_connector->add( $this->pools[ $pool_class ], $group );
+			$this->pool_group_connector->add( $this->pools[ $pool_type ], $group );
 		}
 	}
 
@@ -136,18 +140,5 @@ class PoolManager {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function get_pool_instance( $pool, $args = null ) {
-		$reflection_class = new ReflectionClass( $pool );
-
-		$interfaces = $reflection_class->getInterfaceNames();
-		if ( ! in_array( CacheItemPoolInterface::class, $interfaces ) ) {
-			throw new \InvalidArgumentException( sprintf( 'Every pool needs to be extending the %s interface.',
-				CacheItemPoolInterface::class ) );
-		}
-
-		if ( null !== $args ) {
-			return $reflection_class->newInstanceArgs( $args );
-		}
-
-		return $reflection_class->newInstance();
 	}
 }
