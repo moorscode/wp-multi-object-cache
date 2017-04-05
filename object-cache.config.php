@@ -20,10 +20,7 @@ $config = [
 		// Use Memcached controller for transients.
 		'Memcached' => [
 			'config'        => [
-				'servers' => [
-					'ip'   => '127.0.0.1',
-					'port' => '1112'
-				],
+				'servers' => [ [ '127.0.0.1', '1112' ] ],
 			],
 			'groups'        => [
 				'site-transient'
