@@ -36,12 +36,7 @@ class Manager {
 		self::$group_manager = new GroupManager();
 		self::$pool_group_connector = new PoolGroupConnector( self::$group_manager );
 
-		$pool_factory = new PoolFactory();
-		$pool_factory->register_builder( new PHP(), 'PHP' );
-		$pool_factory->register_builder( new Memcached(), 'Memcached' );
-		$pool_factory->register_builder( new Redis(), 'Redis' );
-
-		self::$pool_manager = new PoolManager( self::$pool_group_connector, $pool_factory );
+		self::$pool_manager = new PoolManager( self::$pool_group_connector, new PoolFactory() );
 		self::$pool_manager->initialize();
 
 		self::$blog_manager = new CurrentBlogManager( get_current_blog_id() );

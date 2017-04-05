@@ -1,11 +1,10 @@
 <?php
 /**
  * Bootstrap for Object Cache implementations
+ *
+ * Place this file at /wp-content/object-cache.php
+ * Either by coping, symlinking or moving the file.
  */
 
-if ( ! defined( 'OBJECT_CACHE_PATH' ) ) {
-	define( 'OBJECT_CACHE_PATH', __DIR__ );
-}
-
-require_once 'object-cache/autoloader.php';
-require_once 'object-cache/api.php';
+require_once 'mu-plugins/multi-object-cache/vendor/autoload.php';
+require_once 'mu-plugins/multi-object-cache/api.php';

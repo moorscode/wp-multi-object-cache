@@ -25,7 +25,7 @@ class PoolManager {
 	 * @throws \Exception
 	 */
 	public function initialize() {
-		require_once OBJECT_CACHE_PATH . '/object-cache.config.php';
+		require_once dirname(  __DIR__ ) . '/config/object-cache.config.php';
 
 		/** @var array $config */
 		$this->register_pools( $config['pools'] );
@@ -127,18 +127,5 @@ class PoolManager {
 		}
 
 		return $met;
-	}
-
-	/**
-	 * Gets the Pool instance.
-	 *
-	 * @param string $pool Class name of the pool to instance.
-	 * @param array $args Optional. Class arguments.
-	 *
-	 * @return object
-	 *
-	 * @throws \InvalidArgumentException
-	 */
-	protected function get_pool_instance( $pool, $args = null ) {
 	}
 }

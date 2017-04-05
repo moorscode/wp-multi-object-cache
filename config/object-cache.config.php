@@ -2,21 +2,21 @@
 
 $config = [
 	'pools' => [
-		// Default/fallback controller.
-		'Redis'     => [
-			'config'        => [
-				'servers' => [
-					'ip'   => '127.0.0.1',
-					'port' => '1112'
-				],
-			],
-			'groups'        => [
-				''
-			],
-			'prerequisites' => [
-				'class' => 'Redis',
-			]
-		],
+//		// Default/fallback controller.
+//		'Redis'     => [
+//			'config'        => [
+//				'servers' => [
+//					'ip'   => '127.0.0.1',
+//					'port' => '1112'
+//				],
+//			],
+//			'groups'        => [
+//				''
+//			],
+//			'prerequisites' => [
+//				'class' => 'Redis',
+//			]
+//		],
 		// Use Memcached controller for transients.
 		'Memcached' => [
 			'config'        => [
