@@ -15,9 +15,7 @@ class Redis implements PoolBuilderInterface {
 	 * @return RedisCachePool
 	 */
 	public function create( array $config = [] ) {
-		$redis = $this->initialize( $config );
-
-		return new RedisCachePool( $redis );
+		return new RedisCachePool( $this->initialize( $config ) );
 	}
 
 	/**
