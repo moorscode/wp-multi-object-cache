@@ -12,10 +12,10 @@ class KeyFormat {
 		global $table_prefix;
 
 		// Allow for multiple sites to use the same Object Cache.
-		$key_format = $table_prefix . ':%s';
+		$key_format = $table_prefix . '%s';
 
 		if ( $this->is_multisite() ) {
-			$key_format = Manager::get_blog_id() . ':%s';
+			$key_format = Manager::get_blog_id() . '.%s';
 		}
 
 		return WP_CACHE_KEY_SALT . $key_format;
