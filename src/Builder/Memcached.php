@@ -38,10 +38,10 @@ class Memcached implements PoolBuilderInterface {
 	 * @return  bool True on success; false on failure.
 	 */
 	protected function addServers( array $servers ) {
+		$add = $servers;
+
 		if ( $this->memcached->isPersistent() ) {
 			$add = $this->getUnusedServers( $servers );
-		} else {
-			$add = $servers;
 		}
 
 		if ( ! empty( $add ) ) {
@@ -52,31 +52,35 @@ class Memcached implements PoolBuilderInterface {
 	}
 
 	/**
-	 * @param $servers
+	 * Filters out used servers from a list
 	 *
-	 * @return array
+	 * @param array $servers List of servers to filter out used ones from.
+	 *
+	 * @return array List of unused server.
 	 */
-	private function getUnusedServers( $servers ) {
-		$unused = array();
+	private function getUnusedServers( array $servers ) {
+		$unused = $servers;
 
 		$listed = $this->memcached->getServerList();
 		if ( ! empty( $listed ) ) {
+			$unused = array();
+
 			foreach ( $servers as $server ) {
 
 				$test = array(
 					'host'   => $server[0],
 					'port'   => $server[1],
-					'weight' => isset( $server[2] ) ? intval( $server[2] ) : 0,
+					'weight' => isset( $server[2] ) ? (int) $server[2] : 0,
 				);
 
-				$found = in_array( $test, $listed );
+				$found = in_array( $test, $listed, true );
 
-				if ( ! $found ) {
-					$unused[] = $server;
+				if ( $found ) {
+					continue;
 				}
+
+				$unused[] = $server;
 			}
-		} else {
-			$unused = $servers;
 		}
 
 		return $unused;
