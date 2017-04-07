@@ -220,6 +220,8 @@ class PSRCacheAdapter implements CacheInterface {
 			} else {
 				$item->expiresAfter( $expire );
 			}
+		} else {
+			$item->expiresAfter( null );
 		}
 
 		return $this->pool->save( $item );
