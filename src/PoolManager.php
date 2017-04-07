@@ -82,18 +82,13 @@ class PoolManager {
 	 * @throws \InvalidArgumentException
 	 */
 	protected function register_pool( $pool_type, $data ) {
-		if ( ! class_exists( $pool_type ) ) {
-			throw new \InvalidArgumentException( sprintf( 'Class %s not found while loading Object Cache pools.',
-				$pool_type ) );
-		}
-
 		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
 			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
 				$pool_type ) );
 		}
 
-		if ( $this->check_prerequisites( $data['prerequisites'] ) ) {
-			$args                      = ( isset( $data['config'] ) ? $data['config'] : null );
+		if ( empty( $data['prerequisites'] ) || $this->check_prerequisites( $data['prerequisites'] ) ) {
+			$args                      = ( isset( $data['config'] ) ? $data['config'] : [] );
 			$this->pools[ $pool_type ] = $this->pool_factory->get( $pool_type, $args );
 		} else {
 			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
