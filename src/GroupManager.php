@@ -4,7 +4,7 @@ namespace MultiObjectCache\Cache;
 
 class GroupManager {
 	/** @var array Aliases */
-	protected $group_aliases = array();
+	protected $group_aliases = [];
 
 	/**
 	 * Adds an alias to a group, so the same controller will be used.
@@ -15,11 +15,7 @@ class GroupManager {
 	 * @throws \InvalidArgumentException
 	 */
 	public function add_alias( $group, $alias ) {
-		if ( isset( $this->group_aliases[ $alias ] ) && $this->group_aliases[ $alias ] === $group ) {
-			throw new \InvalidArgumentException( sprintf( '%s has been aliased to %s already.', $alias, $group ) );
-		}
-
-		$this->group_aliases[ $group ] = $alias;
+		$this->group_aliases[ $alias ] = $group;
 	}
 
 	/**
