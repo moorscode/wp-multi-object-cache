@@ -15,8 +15,8 @@ class PSRCacheAdapter implements CacheInterface {
 	/**
 	 * WPCachePSRAdapter constructor.
 	 *
-	 * @param AbstractCachePool  $pool
-	 * @param string                 $group
+	 * @param AbstractCachePool $pool
+	 * @param string            $group
 	 */
 	public function __construct( AbstractCachePool $pool, $group ) {
 		$this->pool  = $pool;
@@ -56,6 +56,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function add( $key, $data, $expire = null ) {
+		$key = $this->get_key( $key );
 		if ( $this->pool->hasItem( $key ) ) {
 			return false;
 		}
@@ -79,6 +80,8 @@ class PSRCacheAdapter implements CacheInterface {
 			throw new \InvalidArgumentException( 'Offset should be an integer.' );
 		}
 
+		$key = $this->get_key( $key );
+
 		return $this->increase( $key, - $offset );
 	}
 
@@ -92,6 +95,8 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function delete( $key ) {
+		$key = $this->get_key( $key );
+
 		return $this->pool->deleteItem( $key );
 	}
 
@@ -119,6 +124,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 *                      contents on success
 	 */
 	public function get( $key, $force = false, &$found = null ) {
+		$key   = $this->get_key( $key );
 		$found = $this->pool->hasItem( $key );
 		if ( $found ) {
 			return $this->pool->getItem( $key )->get();
@@ -143,6 +149,7 @@ class PSRCacheAdapter implements CacheInterface {
 			throw new \InvalidArgumentException( 'Offset should be an integer.' );
 		}
 
+		$key = $this->get_key( $key );
 		if ( ! $this->pool->hasItem( $key ) ) {
 			return false;
 		}
@@ -174,6 +181,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function replace( $key, $data, $expire = null ) {
+		$key = $this->get_key( $key );
 		if ( ! $this->pool->hasItem( $key ) ) {
 			return false;
 		}
@@ -206,6 +214,8 @@ class PSRCacheAdapter implements CacheInterface {
 		if ( function_exists( 'wp_suspend_cache_addition' ) && wp_suspend_cache_addition() ) {
 			return false;
 		}
+
+		$key = $this->get_key( $key );
 
 		$item = $this->pool->getItem( $key );
 		$item->set( $data );
