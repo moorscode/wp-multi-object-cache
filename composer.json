@@ -3,7 +3,8 @@
   "description": "Object Cache allowing for multiple cache implementations",
   "type": "wordpress-muplugin",
   "require": {
-    "cache/cache": "^0.4.0"
+    "cache/cache": "^0.4.0",
+    "predis/predis": "^1.1"
   },
   "license": "GPLv3",
   "authors": [

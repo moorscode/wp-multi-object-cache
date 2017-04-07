@@ -10,9 +10,6 @@ $config = [
 			'groups'        => [
 				''
 			],
-			'prerequisites' => [
-				'class' => 'Redis',
-			]
 		],
 		// Use Memcached controller for transients.
 		'Memcached' => [
