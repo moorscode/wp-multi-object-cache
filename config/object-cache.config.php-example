@@ -5,10 +5,15 @@ $config = [
 		// Default/fallback controller.
 		'Redis'     => [
 			'config'        => [
-				'servers' => [ [ '127.0.0.1', 6379 ] ],
+				'scheme' => 'tcp',
+				'host' => '127.0.0.1',
+				'port' => 6379
 			],
 			'groups'        => [
 				''
+			],
+			'prerequisites' => [
+				'class' => 'Redis',
 			],
 		],
 		// Use Memcached controller for transients.
@@ -21,7 +26,7 @@ $config = [
 			],
 			'prerequisites' => [
 				'class' => 'Memcached',
-			]
+			],
 		],
 		// Use Non Persistent Pool.
 		'PHP'       => [
@@ -29,5 +34,5 @@ $config = [
 				'non-persistent'
 			],
 		],
-	]
+	],
 ];
