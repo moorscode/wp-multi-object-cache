@@ -44,10 +44,8 @@ class PoolManager {
 	 * @return PSRCacheAdapter
 	 */
 	public function get( $group = '' ) {
-		$pool = $this->pool_group_connector->get( $group );
-
 		// Create a new Key Pool with initial group name.
-		return new PSRCacheAdapter( $pool, $group );
+		return new PSRCacheAdapter( $this->pool_group_connector->get( $group ), $group );
 	}
 
 	/**
