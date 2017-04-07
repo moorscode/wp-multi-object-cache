@@ -1,1 +1,4 @@
-/vendor/
+vendor/
+
+# Don't save configuration file
+config/object-cache.config.php
