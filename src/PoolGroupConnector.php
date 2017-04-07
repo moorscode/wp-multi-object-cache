@@ -41,12 +41,21 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @return AbstractCachePool
 	 */
 	public function get( $group ) {
+		static $non_persistent_fallback_cache;
 		$group = $this->group_manager->get( $group );
 
 		if ( isset( $this->pool_groups[ $group ] ) ) {
 			return $this->pool_groups[ $group ];
 		}
 
-		return new ArrayCachePool();
+		if ( isset( $this->pool_groups[ '' ] ) ) {
+			return $this->pool_groups[ '' ];
+		}
+
+		if ( null === $non_persistent_fallback_cache ) {
+			$non_persistent_fallback_cache = new ArrayCachePool();
+		}
+
+		return $non_persistent_fallback_cache;
 	}
 }
