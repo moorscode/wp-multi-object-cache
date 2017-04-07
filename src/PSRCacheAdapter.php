@@ -30,7 +30,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 *
 	 * @return string
 	 */
-	protected function get_key( $key ) {
+	protected function normalizeKey( $key ) {
 		$prefix = '';
 
 		if ( ! empty( $this->group ) ) {
@@ -40,7 +40,7 @@ class PSRCacheAdapter implements CacheInterface {
 		$key = sprintf( Manager::get_key_format(), $prefix . $key );
 
 		// Replace reserved characters.
-		return str_replace( [ '{', '}', '(', ')', '/', '\\', '@', ':' ], '!', $key );
+		return str_replace( [ '{', '}', '(', ')', '/', '\\', '@', ':' ], '_', $key );
 	}
 
 	/**
@@ -56,8 +56,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function add( $key, $data, $expire = null ) {
-		$key = $this->get_key( $key );
-		if ( $this->pool->hasItem( $key ) ) {
+		if ( $this->pool->hasItem( $this->normalizeKey( $key ) ) ) {
 			return false;
 		}
 
@@ -80,8 +79,6 @@ class PSRCacheAdapter implements CacheInterface {
 			throw new \InvalidArgumentException( 'Offset should be an integer.' );
 		}
 
-		$key = $this->get_key( $key );
-
 		return $this->increase( $key, - $offset );
 	}
 
@@ -95,9 +92,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function delete( $key ) {
-		$key = $this->get_key( $key );
-
-		return $this->pool->deleteItem( $key );
+		return $this->pool->deleteItem( $this->normalizeKey( $key ) );
 	}
 
 	/**
@@ -124,7 +119,8 @@ class PSRCacheAdapter implements CacheInterface {
 	 *                      contents on success
 	 */
 	public function get( $key, $force = false, &$found = null ) {
-		$key   = $this->get_key( $key );
+		$key = $this->normalizeKey( $key );
+
 		$found = $this->pool->hasItem( $key );
 		if ( $found ) {
 			return $this->pool->getItem( $key )->get();
@@ -149,12 +145,11 @@ class PSRCacheAdapter implements CacheInterface {
 			throw new \InvalidArgumentException( 'Offset should be an integer.' );
 		}
 
-		$key = $this->get_key( $key );
-		if ( ! $this->pool->hasItem( $key ) ) {
+		if ( ! $this->pool->hasItem( $this->normalizeKey( $key ) ) ) {
 			return false;
 		}
 
-		$item  = $this->pool->getItem( $key );
+		$item  = $this->pool->getItem( $this->normalizeKey( $key ) );
 		$value = $item->get();
 
 		if ( null === $value ) {
@@ -163,9 +158,9 @@ class PSRCacheAdapter implements CacheInterface {
 
 		$value += $offset;
 
-		$item->set( $value );
+		$this->set( $key, $value );
 
-		return $item->get();
+		return $this->get( $key );
 	}
 
 	/**
@@ -181,8 +176,7 @@ class PSRCacheAdapter implements CacheInterface {
 	 * @throws \Psr\Cache\InvalidArgumentException
 	 */
 	public function replace( $key, $data, $expire = null ) {
-		$key = $this->get_key( $key );
-		if ( ! $this->pool->hasItem( $key ) ) {
+		if ( ! $this->pool->hasItem( $this->normalizeKey( $key ) ) ) {
 			return false;
 		}
 
@@ -215,7 +209,7 @@ class PSRCacheAdapter implements CacheInterface {
 			return false;
 		}
 
-		$key = $this->get_key( $key );
+		$key = $this->normalizeKey( $key );
 
 		$item = $this->pool->getItem( $key );
 		$item->set( $data );
