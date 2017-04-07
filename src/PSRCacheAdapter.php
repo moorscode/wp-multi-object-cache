@@ -37,7 +37,10 @@ class PSRCacheAdapter implements CacheInterface {
 			$prefix = $this->group . ':';
 		}
 
-		return sprintf( Manager::get_key_format(), $prefix . $key );
+		$key = sprintf( Manager::get_key_format(), $prefix . $key );
+
+		// Replace reserved characters.
+		return str_replace( [ '{', '}', '(', ')', '/', '\\', '@', ':' ], '!', $key );
 	}
 
 	/**
