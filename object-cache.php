@@ -7,7 +7,7 @@
  */
 
 // Make sure the repository checkout location matches this location:
-$base_path = __DIR__ . '/mu-plugins/multi-object-cache';
+$base_path = __DIR__ . '/mu-plugins/wp-multi-object-cache';
 
 require_once $base_path . '/vendor/autoload.php';
 require_once $base_path . '/api.php';
