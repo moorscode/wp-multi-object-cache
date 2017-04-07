@@ -42,16 +42,26 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 */
 	public function get( $group ) {
 		static $non_persistent_fallback_cache;
-		$group = $this->group_manager->get( $group );
 
+		// See if the group has been registered directly.
 		if ( isset( $this->pool_groups[ $group ] ) ) {
 			return $this->pool_groups[ $group ];
 		}
 
-		if ( isset( $this->pool_groups[ '' ] ) ) {
-			return $this->pool_groups[ '' ];
+		// Lookup alias if not found.
+		$group = $this->group_manager->get( $group );
+
+		// Check if alias is present.
+		if ( isset( $this->pool_groups[ $group ] ) ) {
+			return $this->pool_groups[ $group ];
 		}
 
+		// Check if a default has been set.
+		if ( isset( $this->pool_groups[''] ) ) {
+			return $this->pool_groups[''];
+		}
+
+		// Fallback to statically set non-persistent cache.
 		if ( null === $non_persistent_fallback_cache ) {
 			$non_persistent_fallback_cache = new ArrayCachePool();
 		}
