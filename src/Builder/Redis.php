@@ -7,41 +7,42 @@ use MultiObjectCache\Cache\PoolBuilderInterface;
 use Predis\Client;
 
 class Redis implements PoolBuilderInterface {
-	/** @var array Configuration */
-	private $config = [];
-
 	/**
-	 * @param array $config
+	 * Creates the Redis Pool
+	 *
+	 * @param array $config Redis configuration.
 	 *
 	 * @return RedisCachePool
 	 */
-	public function create( array $config = array() ) {
-		$this->config = $config;
-
-		$redis = $this->initialize();
+	public function create( array $config = [] ) {
+		$redis = $this->initialize( $config );
 
 		return new RedisCachePool( $redis );
 	}
 
 	/**
-	 * @return Client|\Redis
+	 * Initializes the Redis object.
+	 *
+	 * @param array $config
+	 *
+	 * @return \Redis
 	 */
-	protected function initialize() {
+	protected function initialize( array $config ) {
 		$type = $this->getRedisType();
 
 		$redis = new \Redis();
 
 		switch ( $type ) {
 			case 'hhvm':
-				$this->connectHHVM( $redis );
+				$this->connectHHVM( $redis, $config );
 				break;
 
 			case 'pecl':
-				$this->connectPECL( $redis );
+				$this->connectPECL( $redis, $config );
 				break;
 		}
 
-		$this->setExtensionConfiguration( $redis );
+		$this->setExtensionConfiguration( $redis, $config );
 
 		// Throws exception if Redis is unavailable.
 		$redis->ping();
@@ -50,6 +51,8 @@ class Redis implements PoolBuilderInterface {
 	}
 
 	/**
+	 * Gets the Redis implementation type
+	 *
 	 * @return string
 	 */
 	private function getRedisType() {
@@ -57,44 +60,51 @@ class Redis implements PoolBuilderInterface {
 	}
 
 	/**
-	 * @param \Redis $redis
+	 * Connects the HHVM Redis version.
 	 *
-	 * @return void
+	 * @param \Redis $redis
+	 * @param array  $config
 	 */
-	private function connectHHVM( $redis ) {
+	private function connectHHVM( \Redis $redis, array $config ) {
 
 		// Adjust host and port, if the scheme is `unix`
-		if ( strcasecmp( 'unix', $this->config['scheme'] ) === 0 ) {
-			$this->config['host'] = 'unix://' . $this->config['path'];
-			$this->config['port'] = 0;
+		if ( strcasecmp( 'unix', $config['scheme'] ) === 0 ) {
+			$config['host'] = 'unix://' . $config['path'];
+			$config['port'] = 0;
 		}
 
-		$redis->connect( $this->config['host'], $this->config['port'] );
+		$redis->connect( $config['host'], $config['port'] );
 	}
 
 	/**
+	 * Connects the PECL Redis version.
+	 *
 	 * @param \Redis $redis
+	 * @param array  $config
+	 */
+	private function connectPECL( \Redis $redis, array $config ) {
+		if ( strcasecmp( 'unix', $config['scheme'] ) === 0 ) {
+			$redis->connect( $config['path'] );
+		} else {
+			$redis->connect( $config['host'], $config['port'] );
+		}
+	}
+
+	/**
+	 * Sets the extension variables based on the config.
+	 *
+	 * @param \Redis $redis
+	 * @param array  $config
 	 *
 	 * @return void
 	 */
-	private function connectPECL( $redis ) {
-		if ( strcasecmp( 'unix', $this->config['scheme'] ) === 0 ) {
-			$redis->connect( $this->config['path'] );
-		} else {
-			$redis->connect( $this->config['host'], $this->config['port'] );
-		}
-	}
-
-	/**
-	 * @return void
-	 */
-	private function setExtensionConfiguration( $redis ) {
-		if ( isset( $this->config['password'] ) ) {
-			$redis->auth( $this->config['password'] );
+	private function setExtensionConfiguration( \Redis $redis, array $config ) {
+		if ( isset( $config['password'] ) ) {
+			$redis->auth( $config['password'] );
 		}
 
-		if ( isset( $this->config['database'] ) ) {
-			$redis->select( $this->config['database'] );
+		if ( isset( $config['database'] ) ) {
+			$redis->select( $config['database'] );
 		}
 	}
 }
