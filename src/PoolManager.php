@@ -66,8 +66,8 @@ class PoolManager {
 	 */
 	protected function register_pools( $pools ) {
 		// Register pools.
-		foreach ( $pools as $pool => $data ) {
-			$this->register_pool( $pool, $data );
+		foreach ( $pools as $name => $data ) {
+			$this->register_pool( $name, $data );
 		}
 	}
 
@@ -79,21 +79,21 @@ class PoolManager {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function register_pool( $pool_type, $data ) {
+	protected function register_pool( $name, $data ) {
 		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
 			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
-				$pool_type ) );
+				$name ) );
 		}
 
 		if ( empty( $data['prerequisites'] ) || $this->check_prerequisites( $data['prerequisites'] ) ) {
-			$args                      = ( isset( $data['config'] ) ? $data['config'] : [] );
-			$this->pools[ $pool_type ] = $this->pool_factory->get( $pool_type, $args );
+			$args                 = ( isset( $data['config'] ) ? $data['config'] : [] );
+			$this->pools[ $name ] = $this->pool_factory->get( $data['method'], $args );
 		} else {
 			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
 		}
 
 		foreach ( $data['groups'] as $group ) {
-			$this->pool_group_connector->add( $this->pools[ $pool_type ], $group );
+			$this->pool_group_connector->add( $this->pools[ $name ], $group );
 		}
 	}
 
