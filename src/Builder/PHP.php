@@ -14,7 +14,7 @@ class PHP implements PoolBuilderInterface {
 	 *
 	 * @return AbstractCachePool
 	 */
-	public function create( array $config = array() ) {
+	public function create( array $config = [] ) {
 		return new ArrayCachePool();
 	}
 }

@@ -12,5 +12,5 @@ interface PoolBuilderInterface {
 	 *
 	 * @return AbstractCachePool
 	 */
-	public function create( array $config = array() );
+	public function create( array $config = [] );
 }

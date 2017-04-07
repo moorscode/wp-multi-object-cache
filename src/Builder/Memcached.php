@@ -17,7 +17,7 @@ class Memcached implements PoolBuilderInterface {
 	 *
 	 * @return AbstractCachePool
 	 */
-	public function create( array $config = array() ) {
+	public function create( array $config = [] ) {
 		$this->memcached = $this->createInstance( $config );
 
 		$this->addServers( $this->getServers( $config ) );

@@ -15,7 +15,7 @@ class Memcache implements PoolBuilderInterface {
 	 *
 	 * @return AbstractCachePool
 	 */
-	public function create( array $config = array() ) {
+	public function create( array $config = [] ) {
 		$memcached = new \Memcache();
 
 		return new MemcacheCachePool( $memcached );
