@@ -13,6 +13,11 @@ class PoolGroupConnector {
 	/** @var GroupManager Group Manager */
 	protected $group_manager;
 
+	/**
+	 * PoolGroupConnector constructor.
+	 *
+	 * @param GroupManager $group_manager
+	 */
 	public function __construct( GroupManager $group_manager ) {
 		$this->group_manager = $group_manager;
 	}
