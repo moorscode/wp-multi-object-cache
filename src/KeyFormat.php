@@ -3,6 +3,11 @@
 namespace MultiObjectCache\Cache;
 
 class KeyFormat {
+	/**
+	 * Gets the cache key format to be used
+	 *
+	 * @return string
+	 */
 	public function get() {
 		global $table_prefix;
 

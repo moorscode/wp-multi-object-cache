@@ -3,7 +3,7 @@
 namespace MultiObjectCache\Cache;
 
 class GroupManager {
-	/** @var array */
+	/** @var array Aliases */
 	protected $group_aliases = array();
 
 	/**

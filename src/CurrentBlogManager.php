@@ -6,6 +6,11 @@ class CurrentBlogManager {
 	/** @var int Blog ID */
 	protected $blog_id;
 
+	/**
+	 * CurrentBlogManager constructor.
+	 *
+	 * @param int $blog_id Current Blog ID.
+	 */
 	public function __construct( $blog_id ) {
 		$this->switch_to_blog( $blog_id );
 	}
