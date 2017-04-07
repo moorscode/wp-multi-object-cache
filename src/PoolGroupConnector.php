@@ -6,7 +6,7 @@ use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 
-class PoolGroupConnector {
+class PoolGroupConnector implements PoolGroupConnectorInterface {
 	/** @var array */
 	protected $pool_groups = array();
 
