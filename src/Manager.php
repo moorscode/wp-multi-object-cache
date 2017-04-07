@@ -2,9 +2,6 @@
 
 namespace MultiObjectCache\Cache;
 
-use MultiObjectCache\Cache\Builder\Memcached;
-use MultiObjectCache\Cache\Builder\PHP;
-use MultiObjectCache\Cache\Builder\Redis;
 use Psr\Cache\CacheItemPoolInterface;
 
 class Manager {
@@ -39,7 +36,7 @@ class Manager {
 		self::$pool_manager = new PoolManager( self::$pool_group_connector, new PoolFactory() );
 		self::$pool_manager->initialize();
 
-		self::$blog_manager = new CurrentBlogManager( get_current_blog_id() );
+		self::$blog_manager = new CurrentBlogManager( \get_current_blog_id() );
 
 		self::$key_format = new KeyFormat();
 	}
