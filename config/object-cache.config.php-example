@@ -9,23 +9,28 @@ $config = [
 				'host' => '127.0.0.1',
 				'port' => 6379
 			],
-			'groups'        => [
-				''
-			],
 			'prerequisites' => [
 				'class' => 'Redis',
 			],
+			'groups'        => [
+				''
+			],
 		],
-		// Use Memcached controller for transients.
 		'Memcached' => [
 			'config'        => [
-				'servers' => [ [ '127.0.0.1', 11211 ] ],
-			],
-			'groups'        => [
-				'site-transient'
+				'servers' => [
+					[
+						'127.0.0.1',
+						11211
+					],
+				],
 			],
 			'prerequisites' => [
 				'class' => 'Memcached',
+			],
+			'groups'        => [
+				'transient',
+				'site-transient',
 			],
 		],
 		// Use Non Persistent Pool.
