@@ -17,10 +17,7 @@ class Predis implements PoolBuilderInterface {
 	 * @throws \Exception
 	 */
 	public function create( array $config = [] ) {
-
-		$predis = $this->initialize( $config );
-
-		return new PredisCachePool( $predis );
+		return new PredisCachePool( $this->initialize( $config ) );
 	}
 
 	/**
@@ -32,7 +29,7 @@ class Predis implements PoolBuilderInterface {
 	 */
 	private function initialize( array $config ) {
 		$options    = [];
-		$parameters = null;
+		$parameters = $config;
 
 		if ( ! empty( $config['cluster'] ) ) {
 			$parameters         = $config['cluster'];
