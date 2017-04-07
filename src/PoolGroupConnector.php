@@ -40,7 +40,7 @@ class PoolGroupConnector {
 	 *
 	 * @return AbstractCachePool
 	 */
-	public function get_pool( $group ) {
+	public function get( $group ) {
 		$group = $this->group_manager->get( $group );
 
 		if ( isset( $this->pool_groups[ $group ] ) ) {

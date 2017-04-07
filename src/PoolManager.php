@@ -3,21 +3,26 @@
 namespace MultiObjectCache\Cache;
 
 use Psr\Cache\CacheItemPoolInterface;
-use ReflectionClass;
 
 class PoolManager {
-	/** @var  array */
+	/** @var array */
 	protected $pools = array();
 
-	/** @var PoolGroupConnector Pool Group Connector */
+	/** @var PoolGroupConnectorInterface Pool Group Connector */
 	protected $pool_group_connector;
 
-	/** @var PoolFactory Pool Factory */
+	/** @var PoolFactoryInterface Pool Factory */
 	protected $pool_factory;
 
-	public function __construct( PoolGroupConnector $pool_group_connector, PoolFactory $pool_factory ) {
+	/**
+	 * PoolManager constructor.
+	 *
+	 * @param PoolGroupConnectorInterface $pool_group_connector Pool Group connector instance.
+	 * @param PoolFactoryInterface        $pool_factory         Pool Factory instance.
+	 */
+	public function __construct( PoolGroupConnectorInterface $pool_group_connector, PoolFactoryInterface $pool_factory ) {
 		$this->pool_group_connector = $pool_group_connector;
-		$this->pool_factory = $pool_factory;
+		$this->pool_factory         = $pool_factory;
 	}
 
 	/**
@@ -25,7 +30,7 @@ class PoolManager {
 	 * @throws \Exception
 	 */
 	public function initialize() {
-		require_once dirname(  __DIR__ ) . '/config/object-cache.config.php';
+		require_once dirname( __DIR__ ) . '/config/object-cache.config.php';
 
 		/** @var array $config */
 		$this->register_pools( $config['pools'] );
@@ -39,7 +44,7 @@ class PoolManager {
 	 * @return PSRCacheAdapter
 	 */
 	public function get( $group = '' ) {
-		$pool = $this->pool_group_connector->get_pool( $group );
+		$pool = $this->pool_group_connector->get( $group );
 
 		// Create a new Key Pool with initial group name.
 		return new PSRCacheAdapter( $pool, $group );
@@ -72,7 +77,7 @@ class PoolManager {
 	 * Registers a pool.
 	 *
 	 * @param string $pool_type Class name of the Pool to register.
-	 * @param array $data Configuration to use on the pool.
+	 * @param array  $data      Configuration to use on the pool.
 	 *
 	 * @throws \InvalidArgumentException
 	 */

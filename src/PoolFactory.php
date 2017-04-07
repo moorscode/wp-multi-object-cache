@@ -2,7 +2,7 @@
 
 namespace MultiObjectCache\Cache;
 
-class PoolFactory {
+class PoolFactory implements PoolFactoryInterface {
 	/**
 	 * Gets a pool by type and configuration
 	 *
