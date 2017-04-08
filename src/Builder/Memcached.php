@@ -7,9 +7,6 @@ use Cache\Adapter\Memcached\MemcachedCachePool;
 use MultiObjectCache\Cache\PoolBuilderInterface;
 
 class Memcached implements PoolBuilderInterface {
-	/** @var \Memcached Memcached instance */
-	protected $memcached;
-
 	/**
 	 * Creates a pool
 	 *
@@ -18,11 +15,11 @@ class Memcached implements PoolBuilderInterface {
 	 * @return AbstractCachePool
 	 */
 	public function create( array $config = [] ) {
-		$this->memcached = $this->createInstance( $config );
+		$memcached = $this->createInstance( $config );
 
-		$this->addServers( $this->getServers( $config ) );
+		$this->addServers( $memcached, $this->getServers( $config ) );
 
-		return new MemcachedCachePool( $this->memcached );
+		return new MemcachedCachePool( $memcached );
 	}
 
 	/**
@@ -33,19 +30,20 @@ class Memcached implements PoolBuilderInterface {
 	 *
 	 * @link    http://www.php.net/manual/en/memcached.addservers.php
 	 *
-	 * @param   array $servers Array of server to register.
+	 * @param \Memcached $memcached Memcached instance.
+	 * @param array      $servers   Array of server to register.
 	 *
-	 * @return  bool True on success; false on failure.
+	 * @return bool True on success; false on failure.
 	 */
-	protected function addServers( array $servers ) {
+	protected function addServers( \Memcached $memcached, array $servers ) {
 		$add = $servers;
 
-		if ( $this->memcached->isPersistent() ) {
-			$add = $this->getUnusedServers( $servers );
+		if ( $memcached->isPersistent() ) {
+			$add = $this->getUnusedServers( $memcached, $servers );
 		}
 
 		if ( ! empty( $add ) ) {
-			return $this->memcached->addServers( $add );
+			return $memcached->addServers( $add );
 		}
 
 		return true;
@@ -54,14 +52,15 @@ class Memcached implements PoolBuilderInterface {
 	/**
 	 * Filters out used servers from a list
 	 *
-	 * @param array $servers List of servers to filter out used ones from.
+	 * @param \Memcached $memcached Memcached instance.
+	 * @param array      $servers   List of servers to filter out used ones from.
 	 *
 	 * @return array List of unused server.
 	 */
-	private function getUnusedServers( array $servers ) {
+	private function getUnusedServers( \Memcached $memcached, array $servers ) {
 		$unused = $servers;
 
-		$listed = $this->memcached->getServerList();
+		$listed = $memcached->getServerList();
 		if ( ! empty( $listed ) ) {
 			$unused = array();
 
@@ -109,7 +108,16 @@ class Memcached implements PoolBuilderInterface {
 	 * @return array
 	 */
 	protected function getServers( array $config ) {
-		$servers = $config['servers'];
+		$servers = [];
+
+		if ( ! empty( $config['server'] ) ) {
+			$servers = [ $config['server'] ];
+		}
+
+		if ( ! emptY( $config['servers'] ) ) {
+			$servers = $config['servers'];
+		}
+
 		if ( empty( $servers ) ) {
 			$servers = [ [ '127.0.0.1', 11211 ] ];
 		}
