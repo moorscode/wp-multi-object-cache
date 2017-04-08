@@ -13,6 +13,8 @@ class Redis implements PoolBuilderInterface {
 	 * @param array $config Redis configuration.
 	 *
 	 * @return RedisCachePool
+	 *
+	 * @throws \RuntimeException
 	 */
 	public function create( array $config = [] ) {
 		$config = wp_parse_args( $config, [
@@ -26,23 +28,29 @@ class Redis implements PoolBuilderInterface {
 	/**
 	 * Initializes the Redis object.
 	 *
-	 * @param array $config
+	 * @param array $config Configuration.
 	 *
 	 * @return \Redis
+	 * @throws \RuntimeException
 	 */
 	protected function initialize( array $config ) {
-		$type = $this->getRedisType();
+		$connected = false;
 
+		$type = $this->getRedisType();
 		$redis = new \Redis();
 
 		switch ( $type ) {
 			case 'hhvm':
-				$this->connectHHVM( $redis, $config );
+				$connected = $this->connectHHVM( $redis, $config );
 				break;
 
 			case 'pecl':
-				$this->connectPECL( $redis, $config );
+				$connected = $this->connectPECL( $redis, $config );
 				break;
+		}
+
+		if ( ! $connected ) {
+			throw new \RuntimeException( 'Redis could not connect.' );
 		}
 
 		$this->setExtensionConfiguration( $redis, $config );
@@ -65,8 +73,10 @@ class Redis implements PoolBuilderInterface {
 	/**
 	 * Connects the HHVM Redis version.
 	 *
-	 * @param \Redis $redis
-	 * @param array  $config
+	 * @param \Redis $redis  Redis instance.
+	 * @param array  $config Configuration.
+	 *
+	 * @return bool
 	 */
 	private function connectHHVM( \Redis $redis, array $config ) {
 
@@ -76,30 +86,30 @@ class Redis implements PoolBuilderInterface {
 			$config['port'] = 0;
 		}
 
-		$redis->connect( $config['host'], $config['port'] );
+		return $redis->connect( $config['host'], $config['port'] );
 	}
 
 	/**
 	 * Connects the PECL Redis version.
 	 *
-	 * @param \Redis $redis
-	 * @param array  $config
+	 * @param \Redis $redis  Redis instance.
+	 * @param array  $config Configuration.
+	 *
+	 * @return bool
 	 */
 	private function connectPECL( \Redis $redis, array $config ) {
 		if ( strcasecmp( 'unix', $config['scheme'] ) === 0 ) {
-			$redis->connect( $config['path'] );
-		} else {
-			$redis->connect( $config['host'], $config['port'] );
+			return $redis->connect( $config['path'] );
 		}
+
+		return $redis->connect( $config['host'], $config['port'] );
 	}
 
 	/**
 	 * Sets the extension variables based on the config.
 	 *
-	 * @param \Redis $redis
-	 * @param array  $config
-	 *
-	 * @return void
+	 * @param \Redis $redis  Redis instance.
+	 * @param array  $config Configuration.
 	 */
 	private function setExtensionConfiguration( \Redis $redis, array $config ) {
 		if ( isset( $config['password'] ) ) {
