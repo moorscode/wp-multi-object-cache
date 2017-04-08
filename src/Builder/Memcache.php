@@ -16,8 +16,41 @@ class Memcache implements PoolBuilderInterface {
 	 * @return AbstractCachePool
 	 */
 	public function create( array $config = [] ) {
-		$memcached = new \Memcache();
+		$memcache = new \Memcache();
 
-		return new MemcacheCachePool( $memcached );
+		$this->initialize( $memcache, $config );
+
+		return new MemcacheCachePool( $memcache );
+	}
+
+	/**
+	 * Initializes the Memcache connection.
+	 *
+	 * @param \Memcache $memcache Memcache instance.
+	 * @param array     $config   Configuration.
+	 *
+	 * @return bool
+	 */
+	private function initialize( $memcache, $config ) {
+		if ( $config['persistent'] ) {
+			return call_user_func_array( [ $memcache, 'pconnect' ], $config['server'] );
+		}
+
+		$servers = [];
+		if ( ! empty( $config['server'] ) ) {
+			$servers = [ $config['server'] ];
+		}
+
+		if ( ! empty( $config['servers'] ) ) {
+			$servers = $config['servers'];
+		}
+
+		$results = array_map( function ( $server ) use ( $memcache ) {
+			call_user_func_array( [ $memcache, 'addServer' ], $server );
+		}, $servers );
+
+		$success = array_filter( $results );
+
+		return ( count( $success ) === count( $results ) );
 	}
 }
