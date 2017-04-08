@@ -1,6 +1,6 @@
 {
   "name": "moorscode/wp-multi-object-cache",
-  "description": "Object Cache allowing for multiple cache implementations",
+  "description": "WordPress Multi Object Cache allowing for a cache implementation on a group basis.",
   "type": "wordpress-muplugin",
   "require": {
     "cache/cache": "^0.4.0",
