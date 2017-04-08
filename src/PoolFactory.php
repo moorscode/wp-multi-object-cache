@@ -2,6 +2,8 @@
 
 namespace WPMultiObjectCache;
 
+use Cache\Adapter\Common\AbstractCachePool;
+
 class PoolFactory implements PoolFactoryInterface {
 	/**
 	 * Gets a pool by type and configuration
@@ -9,11 +11,12 @@ class PoolFactory implements PoolFactoryInterface {
 	 * @param string $type   Type of Pool to retrieve.
 	 * @param array  $config Optional. Configuration for creating the Pool.
 	 *
-	 * @return mixed
+	 * @return AbstractCachePool
 	 * @throws \LogicException
 	 */
 	public function get( $type, array $config = array() ) {
 		$class_name = __NAMESPACE__ . '\\Builder\\' . $type;
+
 		if ( ! class_exists( $class_name ) ) {
 			throw new \LogicException( sprintf( 'Builder %s does not exist.', $type ) );
 		}
