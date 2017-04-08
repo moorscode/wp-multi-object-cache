@@ -31,6 +31,8 @@ Upcoming services:
 ## Example configuration
 In the configuration file the `transient` and `site-transient` groups are stored in Memcached, `non-persistent` group (and aliases of this group) are stored in PHP, while the rest of the groups are stored in Redis.
 
+It is very simple to configure a dedicated (Redis|Memcached|Memcache) service to hold all user-related, options or post-type cache.
+
 ## Requirements
 - Composer
 - PHP 5.4
