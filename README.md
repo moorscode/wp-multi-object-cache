@@ -55,6 +55,14 @@ In the configuration file the `transient` and `site-transient` groups are stored
 It is very simple to configure a dedicated (Redis|Memcached|Memcache) service to hold all user-related, options or posts cache.
 
 For an example which places default data in `Redis #1`, **user** data inside `Redis #2` and all **transients** in a `memcached` instance see https://gist.github.com/moorscode/19cc541522037ef439a785646b2628f2
+This example works with the following docker-compose configuration: https://gist.github.com/moorscode/0eaeeb05d966bee7051d800967edd68a
+
+1. Create a directory and download the latest WordPress files inside it https://wordpress.org/latest.zip
+1. Run `docker-compose up` inside the directory to spin up the docker instances
+    1. To learn more about this configuration see http://docs.docker4wordpress.org/en/latest/
+1. Follow the installation instructions in this repository
+1. _Optionally._ Install the `Query Monitor` WordPress plugin to see how many queries are executed
+1. **Note:** The first time visiting the site will be slow because the cache has not been filled yet.
 
 # Choices and considerations
 The project has been setup with a couple of requirements, PHP 5.4 and composer. In WordPress the main philosophy is that it should be easy to use for everyone.
