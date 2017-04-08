@@ -15,6 +15,10 @@ class Memcached implements PoolBuilderInterface {
 	 * @return AbstractCachePool
 	 */
 	public function create( array $config = [] ) {
+		$config = wp_parse_args( $config, [
+			'server' => [ '127.0.0.1', 11211 ],
+		] );
+
 		$memcached = $this->createInstance( $config );
 
 		$this->addServers( $memcached, $this->getServers( $config ) );
