@@ -14,6 +14,7 @@ class Memcache implements PoolBuilderInterface {
 	 * @param array $config Config to use to create the pool.
 	 *
 	 * @return AbstractCachePool
+	 * @throws \RuntimeException
 	 */
 	public function create( array $config = [] ) {
 		$config = wp_parse_args( $config, [
@@ -22,7 +23,9 @@ class Memcache implements PoolBuilderInterface {
 
 		$memcache = new \Memcache();
 
-		$this->initialize( $memcache, $config );
+		if ( ! $this->initialize( $memcache, $config ) ) {
+			throw new \RuntimeException( 'Memcache failed to add servers to it\'s pool.' );
+		}
 
 		return new MemcacheCachePool( $memcache );
 	}
