@@ -2,9 +2,8 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Psr\Cache\CacheItemPoolInterface;
-use WPMultiObjectCache\Builder\Null;
+use WPMultiObjectCache\Builder\Void;
 
 class PoolManager {
 	/** @var array */
@@ -140,8 +139,8 @@ class PoolManager {
 			return $this->poolFactory->get( $data['method'], $args );
 		}
 
-		trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
+		trigger_error( 'Pool prerequisites not met, using Void (Null) implementation.', E_USER_WARNING );
 
-		return new Null();
+		return new Void();
 	}
 }
