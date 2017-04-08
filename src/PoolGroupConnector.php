@@ -8,18 +8,18 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class PoolGroupConnector implements PoolGroupConnectorInterface {
 	/** @var array */
-	protected $pool_groups = array();
+	protected $poolGroups = array();
 
 	/** @var GroupManager Group Manager */
-	protected $group_manager;
+	protected $groupManager;
 
 	/**
 	 * PoolGroupConnector constructor.
 	 *
-	 * @param GroupManager $group_manager
+	 * @param GroupManager $groupManager
 	 */
-	public function __construct( GroupManager $group_manager ) {
-		$this->group_manager = $group_manager;
+	public function __construct( GroupManager $groupManager ) {
+		$this->groupManager = $groupManager;
 	}
 
 	/**
@@ -29,8 +29,8 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @param string                 $group Group to assign to.
 	 */
 	public function add( CacheItemPoolInterface $pool, $group ) {
-		$group                       = $this->group_manager->get( $group );
-		$this->pool_groups[ $group ] = $pool;
+		$group                      = $this->groupManager->get( $group );
+		$this->poolGroups[ $group ] = $pool;
 	}
 
 	/**
@@ -41,31 +41,31 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @return AbstractCachePool
 	 */
 	public function get( $group ) {
-		static $non_persistent_fallback_cache;
+		static $nonPersistentFallback;
 
 		// See if the group has been registered directly.
-		if ( isset( $this->pool_groups[ $group ] ) ) {
-			return $this->pool_groups[ $group ];
+		if ( isset( $this->poolGroups[ $group ] ) ) {
+			return $this->poolGroups[ $group ];
 		}
 
 		// Lookup alias if not found.
-		$group = $this->group_manager->get( $group );
+		$group = $this->groupManager->get( $group );
 
 		// Check if alias is present.
-		if ( isset( $this->pool_groups[ $group ] ) ) {
-			return $this->pool_groups[ $group ];
+		if ( isset( $this->poolGroups[ $group ] ) ) {
+			return $this->poolGroups[ $group ];
 		}
 
 		// Check if a default has been set.
-		if ( isset( $this->pool_groups[''] ) ) {
-			return $this->pool_groups[''];
+		if ( isset( $this->poolGroups[''] ) ) {
+			return $this->poolGroups[''];
 		}
 
 		// Fallback to statically set non-persistent cache.
-		if ( null === $non_persistent_fallback_cache ) {
-			$non_persistent_fallback_cache = new ArrayCachePool();
+		if ( null === $nonPersistentFallback ) {
+			$nonPersistentFallback = new ArrayCachePool();
 		}
 
-		return $non_persistent_fallback_cache;
+		return $nonPersistentFallback;
 	}
 }

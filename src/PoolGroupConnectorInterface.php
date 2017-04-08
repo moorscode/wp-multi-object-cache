@@ -9,9 +9,9 @@ interface PoolGroupConnectorInterface {
 	/**
 	 * PoolGroupConnector constructor.
 	 *
-	 * @param GroupManager $group_manager
+	 * @param GroupManager $groupManager
 	 */
-	public function __construct( GroupManager $group_manager );
+	public function __construct( GroupManager $groupManager );
 
 	/**
 	 * Assigns a Pool to a group.

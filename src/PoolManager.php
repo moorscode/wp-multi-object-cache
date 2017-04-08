@@ -9,20 +9,20 @@ class PoolManager {
 	protected $pools = array();
 
 	/** @var PoolGroupConnectorInterface Pool Group Connector */
-	protected $pool_group_connector;
+	protected $poolGroupConnector;
 
 	/** @var PoolFactoryInterface Pool Factory */
-	protected $pool_factory;
+	protected $poolFactory;
 
 	/**
 	 * PoolManager constructor.
 	 *
-	 * @param PoolGroupConnectorInterface $pool_group_connector Pool Group connector instance.
-	 * @param PoolFactoryInterface        $pool_factory         Pool Factory instance.
+	 * @param PoolGroupConnectorInterface $poolGroupConnector Pool Group connector instance.
+	 * @param PoolFactoryInterface        $poolFactory        Pool Factory instance.
 	 */
-	public function __construct( PoolGroupConnectorInterface $pool_group_connector, PoolFactoryInterface $pool_factory ) {
-		$this->pool_group_connector = $pool_group_connector;
-		$this->pool_factory         = $pool_factory;
+	public function __construct( PoolGroupConnectorInterface $poolGroupConnector, PoolFactoryInterface $poolFactory ) {
+		$this->poolGroupConnector = $poolGroupConnector;
+		$this->poolFactory        = $poolFactory;
 	}
 
 	/**
@@ -33,7 +33,7 @@ class PoolManager {
 		require_once dirname( __DIR__ ) . '/config/object-cache.config.php';
 
 		/** @var array $config */
-		$this->register_pools( $config['pools'] );
+		$this->registerPools( $config['pools'] );
 	}
 
 	/**
@@ -45,7 +45,7 @@ class PoolManager {
 	 */
 	public function get( $group = '' ) {
 		// Create a new Key Pool with initial group name.
-		return new PSRCacheAdapter( $this->pool_group_connector->get( $group ), $group );
+		return new PSRCacheAdapter( $this->poolGroupConnector->get( $group ), $group );
 	}
 
 	/**
@@ -53,7 +53,7 @@ class PoolManager {
 	 *
 	 * @return CacheItemPoolInterface[]
 	 */
-	public function get_pools() {
+	public function getPools() {
 		return $this->pools;
 	}
 
@@ -64,36 +64,36 @@ class PoolManager {
 	 *
 	 * @throws \Exception
 	 */
-	protected function register_pools( $pools ) {
+	protected function registerPools( $pools ) {
 		// Register pools.
 		foreach ( $pools as $name => $data ) {
-			$this->register_pool( $name, $data );
+			$this->registerPool( $name, $data );
 		}
 	}
 
 	/**
 	 * Registers a pool.
 	 *
-	 * @param string $pool_type Class name of the Pool to register.
-	 * @param array  $data      Configuration to use on the pool.
+	 * @param string $name Class name of the Pool to register.
+	 * @param array  $data Configuration to use on the pool.
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	protected function register_pool( $name, $data ) {
+	protected function registerPool( $name, $data ) {
 		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
 			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
 				$name ) );
 		}
 
-		if ( empty( $data['prerequisites'] ) || $this->check_prerequisites( $data['prerequisites'] ) ) {
+		if ( empty( $data['prerequisites'] ) || $this->checkPrerequisites( $data['prerequisites'] ) ) {
 			$args                 = ( isset( $data['config'] ) ? $data['config'] : [] );
-			$this->pools[ $name ] = $this->pool_factory->get( $data['method'], $args );
+			$this->pools[ $name ] = $this->poolFactory->get( $data['method'], $args );
 		} else {
 			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
 		}
 
 		foreach ( $data['groups'] as $group ) {
-			$this->pool_group_connector->add( $this->pools[ $name ], $group );
+			$this->poolGroupConnector->add( $this->pools[ $name ], $group );
 		}
 	}
 
@@ -104,7 +104,7 @@ class PoolManager {
 	 *
 	 * @return bool
 	 */
-	protected function check_prerequisites( array $prerequisites = array() ) {
+	protected function checkPrerequisites( array $prerequisites = array() ) {
 		$met = true;
 
 		foreach ( $prerequisites as $prerequisite ) {

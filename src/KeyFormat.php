@@ -14,8 +14,8 @@ class KeyFormat {
 		// Allow for multiple sites to use the same Object Cache.
 		$key_format = $table_prefix . '%s';
 
-		if ( $this->is_multisite() ) {
-			$key_format = Manager::get_blog_id() . '.%s';
+		if ( $this->isMultiSite() ) {
+			$key_format = Manager::getBlogID() . '.%s';
 		}
 
 		return WP_CACHE_KEY_SALT . $key_format;
@@ -26,16 +26,13 @@ class KeyFormat {
 	 *
 	 * @return bool
 	 */
-	private function is_multisite() {
-		static $multisite;
+	private function isMultiSite() {
+		static $multiSite;
 
-		if ( null === $multisite ) {
-			$multisite = false;
-			if ( function_exists( 'is_multisite' ) ) {
-				$multisite = is_multisite();
-			}
+		if ( null === $multiSite ) {
+			$multiSite = ( function_exists( 'is_multisite' ) && is_multisite() );
 		}
 
-		return $multisite;
+		return $multiSite;
 	}
 }

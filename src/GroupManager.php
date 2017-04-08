@@ -14,7 +14,7 @@ class GroupManager {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function add_alias( $group, $alias ) {
+	public function addAlias( $group, $alias ) {
 		$this->group_aliases[ $alias ] = $group;
 	}
 

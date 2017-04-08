@@ -27,7 +27,7 @@ function wp_cache_init() {
  * @return bool False if cache key and group already exist, true on success.
  */
 function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Manager::get_pool( $group );
+	$object_cache = Manager::getPool( $group );
 
 	return $object_cache->add( $key, $data, $expire );
 }
@@ -57,7 +57,7 @@ function wp_cache_close() {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_decr( $key, $offset = 1, $group = '' ) {
-	return Manager::get_pool( $group )->decrease( $key, $offset );
+	return Manager::getPool( $group )->decrease( $key, $offset );
 }
 
 /**
@@ -69,7 +69,7 @@ function wp_cache_decr( $key, $offset = 1, $group = '' ) {
  * @return bool True on successful removal, false on failure.
  */
 function wp_cache_delete( $key, $group = '' ) {
-	return Manager::get_pool( $group )->delete( $key );
+	return Manager::getPool( $group )->delete( $key );
 }
 
 /**
@@ -86,7 +86,7 @@ function wp_cache_flush( $group = null ) {
 	}
 
 	// Flush specific group.
-	return Manager::get_pool( $group )->clear();
+	return Manager::getPool( $group )->clear();
 }
 
 /**
@@ -97,7 +97,7 @@ function wp_cache_flush( $group = null ) {
 function wp_cache_flush_all() {
 	$success = true;
 
-	$pools = Manager::get_pools();
+	$pools = Manager::getPools();
 	foreach ( $pools as $pool ) {
 		// @todo track status per controller for request?
 		$success = $pool->clear() && $success;
@@ -120,7 +120,7 @@ function wp_cache_flush_all() {
  *                      contents on success
  */
 function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
-	return Manager::get_pool( $group )->get( $key, $force, $found );
+	return Manager::getPool( $group )->get( $key, $force, $found );
 }
 
 /**
@@ -133,7 +133,7 @@ function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
  * @return false|int False on failure, the item's new value on success.
  */
 function wp_cache_incr( $key, $offset = 1, $group = '' ) {
-	return Manager::get_pool( $group )->increase( $key, $offset );
+	return Manager::getPool( $group )->increase( $key, $offset );
 }
 
 /**
@@ -149,7 +149,7 @@ function wp_cache_incr( $key, $offset = 1, $group = '' ) {
  * @return bool False if original value does not exist, true if contents were replaced
  */
 function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
-	return Manager::get_pool( $group )->replace( $key, $data, $expire );
+	return Manager::getPool( $group )->replace( $key, $data, $expire );
 }
 
 /**
@@ -167,7 +167,7 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
  * @return bool False on failure, true on success
  */
 function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
-	return Manager::get_pool( $group )->set( $key, $data, $expire );
+	return Manager::getPool( $group )->set( $key, $data, $expire );
 }
 
 /**
@@ -178,7 +178,7 @@ function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
  * @param int $blog_id Site ID.
  */
 function wp_cache_switch_to_blog( $blog_id ) {
-	Manager::switch_to_blog( $blog_id );
+	Manager::switchToBlog( $blog_id );
 }
 
 /**
@@ -189,7 +189,7 @@ function wp_cache_switch_to_blog( $blog_id ) {
 function wp_cache_add_global_groups( $groups ) {
 	$groups = (array) $groups;
 	foreach ( $groups as $group ) {
-		Manager::add_group_alias( '', $group );
+		Manager::addGroupAlias( '', $group );
 	}
 }
 
@@ -202,7 +202,7 @@ function wp_cache_add_non_persistent_groups( $groups ) {
 	// Default cache doesn't persist so nothing to do here.
 	$groups = (array) $groups;
 	foreach ( $groups as $group ) {
-		Manager::add_group_alias( 'non-persistent', $group );
+		Manager::addGroupAlias( 'non-persistent', $group );
 	}
 }
 

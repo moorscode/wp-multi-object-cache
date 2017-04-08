@@ -6,19 +6,19 @@ use Psr\Cache\CacheItemPoolInterface;
 
 class Manager {
 	/** @var PoolManager Pool Manager */
-	protected static $pool_manager;
+	protected static $poolManager;
 
 	/** @var CurrentBlogManager Blog Manager */
-	protected static $blog_manager;
+	protected static $blogManager;
 
 	/** @var GroupManager Group Manager */
-	protected static $group_manager;
+	protected static $groupManager;
 
-	/** @var KeyFormat $key_format */
-	protected static $key_format;
+	/** @var KeyFormat $keyFormat */
+	protected static $keyFormat;
 
 	/** @var PoolGroupConnector Pool Group Connector */
-	protected static $pool_group_connector;
+	protected static $poolGroupConnector;
 
 	/**
 	 * Initializes the manager.
@@ -30,23 +30,23 @@ class Manager {
 			define( 'WP_CACHE_KEY_SALT', '' );
 		}
 
-		self::$group_manager = new GroupManager();
-		self::$pool_group_connector = new PoolGroupConnector( self::$group_manager );
+		self::$groupManager       = new GroupManager();
+		self::$poolGroupConnector = new PoolGroupConnector( self::$groupManager );
 
-		self::$pool_manager = new PoolManager( self::$pool_group_connector, new PoolFactory() );
-		self::$pool_manager->initialize();
+		self::$poolManager = new PoolManager( self::$poolGroupConnector, new PoolFactory() );
+		self::$poolManager->initialize();
 
-		self::$blog_manager = new CurrentBlogManager( \get_current_blog_id() );
+		self::$blogManager = new CurrentBlogManager( \get_current_blog_id() );
 
-		self::$key_format = new KeyFormat();
+		self::$keyFormat = new KeyFormat();
 	}
 
 	/**
 	 * @param CacheItemPoolInterface $pool
 	 * @param string                 $group
 	 */
-	public static function assign_group( CacheItemPoolInterface $pool, $group ) {
-		self::$pool_group_connector->add( $pool, $group );
+	public static function assignGroup( CacheItemPoolInterface $pool, $group ) {
+		self::$poolGroupConnector->add( $pool, $group );
 	}
 
 	/**
@@ -54,8 +54,8 @@ class Manager {
 	 *
 	 * @return CacheItemPoolInterface[]
 	 */
-	public static function get_pools() {
-		return self::$pool_manager->get_pools();
+	public static function getPools() {
+		return self::$poolManager->getPools();
 	}
 
 	/**
@@ -65,24 +65,24 @@ class Manager {
 	 *
 	 * @return CacheInterface
 	 */
-	public static function get_pool( $group = '' ) {
-		return self::$pool_manager->get( $group );
+	public static function getPool( $group = '' ) {
+		return self::$poolManager->get( $group );
 	}
 
 	/**
 	 * Switches to a specific blog_id.
 	 *
-	 * @param int $blog_id Blog to switch to.
+	 * @param int $blogID Blog to switch to.
 	 */
-	public static function switch_to_blog( $blog_id ) {
-		self::$blog_manager->switch_to_blog( $blog_id );
+	public static function switchToBlog( $blogID ) {
+		self::$blogManager->switchToBlog( $blogID );
 	}
 
 	/**
 	 * @return int
 	 */
-	public static function get_blog_id() {
-		return self::$blog_manager->get_blog_id();
+	public static function getBlogID() {
+		return self::$blogManager->getBlogID();
 	}
 
 	/**
@@ -93,8 +93,8 @@ class Manager {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public static function add_group_alias( $group, $alias ) {
-		self::$group_manager->add_alias( $group, $alias );
+	public static function addGroupAlias( $group, $alias ) {
+		self::$groupManager->addAlias( $group, $alias );
 	}
 
 	/**
@@ -102,7 +102,7 @@ class Manager {
 	 *
 	 * @return string
 	 */
-	public static function get_key_format() {
-		return self::$key_format->get();
+	public static function getKeyFormat() {
+		return self::$keyFormat->get();
 	}
 }
