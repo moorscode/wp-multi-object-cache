@@ -24,10 +24,21 @@ class GroupManager implements GroupManagerInterface {
 	 * @param string $group Group to de-alias.
 	 *
 	 * @return string
+	 * @throws \LogicException
 	 */
 	public function get( $group ) {
-		while ( isset( $this->group_aliases[ $group ] ) ) {
-			$group = $this->group_aliases[ $group ];
+		$original_group = $group;
+
+		// Make sure we don't end up in an infinite loop.
+		$checked = [];
+
+		while ( array_key_exists( $group, $this->group_aliases ) && ! in_array( $group, $checked, true ) ) {
+			$checked[] = $group;
+			$group     = $this->group_aliases[ $group ];
+		}
+
+		if ( in_array( $group, $checked, true ) ) {
+			throw new \LogicException( sprintf( 'Group alias-loop detected on %s for %s', $original_group, $group ) );
 		}
 
 		return $group;
