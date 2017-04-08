@@ -10,12 +10,12 @@ class PoolFactory implements PoolFactoryInterface {
 	 * @param array  $config Optional. Configuration for creating the Pool.
 	 *
 	 * @return mixed
-	 * @throws \InvalidArgumentException
+	 * @throws \LogicException
 	 */
 	public function get( $type, array $config = array() ) {
 		$class_name = __NAMESPACE__ . '\\Builder\\' . $type;
 		if ( ! class_exists( $class_name ) ) {
-			throw new \InvalidArgumentException( sprintf( 'Builder %s does not exist.', $type ) );
+			throw new \LogicException( sprintf( 'Builder %s does not exist.', $type ) );
 		}
 
 		/** @var PoolBuilderInterface $builder */
