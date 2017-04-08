@@ -15,6 +15,11 @@ class Redis implements PoolBuilderInterface {
 	 * @return RedisCachePool
 	 */
 	public function create( array $config = [] ) {
+		$config = wp_parse_args( $config, [
+			'scheme' => 'tcp',
+			'port'   => 6379,
+		] );
+
 		return new RedisCachePool( $this->initialize( $config ) );
 	}
 
