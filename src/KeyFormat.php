@@ -3,6 +3,19 @@
 namespace WPMultiObjectCache;
 
 class KeyFormat {
+
+	/** @var CurrentBlogManager Blog Manager */
+	private $blogManager;
+
+	/**
+	 * KeyFormat constructor.
+	 *
+	 * @param CurrentBlogManager $blogManager
+	 */
+	public function __construct( CurrentBlogManager $blogManager ) {
+		$this->blogManager = $blogManager;
+	}
+
 	/**
 	 * Gets the cache key format to be used
 	 *
@@ -15,7 +28,7 @@ class KeyFormat {
 		$key_format = $table_prefix . '%s';
 
 		if ( $this->isMultiSite() ) {
-			$key_format = Manager::getBlogID() . '.%s';
+			$key_format = $this->blogManager->getBlogID() . '.%s';
 		}
 
 		return WP_CACHE_KEY_SALT . $key_format;

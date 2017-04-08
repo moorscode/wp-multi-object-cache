@@ -38,7 +38,7 @@ class Manager {
 
 		self::$blogManager = new CurrentBlogManager( \get_current_blog_id() );
 
-		self::$keyFormat = new KeyFormat();
+		self::$keyFormat = new KeyFormat( self::$blogManager );
 	}
 
 	/**
@@ -76,13 +76,6 @@ class Manager {
 	 */
 	public static function switchToBlog( $blogID ) {
 		self::$blogManager->switchToBlog( $blogID );
-	}
-
-	/**
-	 * @return int
-	 */
-	public static function getBlogID() {
-		return self::$blogManager->getBlogID();
 	}
 
 	/**
