@@ -54,6 +54,8 @@ In the configuration file the `transient` and `site-transient` groups are stored
 
 It is very simple to configure a dedicated (Redis|Memcached|Memcache) service to hold all user-related, options or posts cache.
 
+For an example which places default data in `Redis #1`, **user** data inside `Redis #2` and all **transients** in a `memcached` instance see https://gist.github.com/moorscode/19cc541522037ef439a785646b2628f2
+
 # Choices and considerations
 The project has been setup with a couple of requirements, PHP 5.4 and composer. In WordPress the main philosophy is that it should be easy to use for everyone.
 I understand and support this point of view but it should not reduce the quality or functionality of a project.
