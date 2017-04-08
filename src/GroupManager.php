@@ -15,6 +15,7 @@ class GroupManager implements GroupManagerInterface {
 	 * @throws \InvalidArgumentException
 	 */
 	public function addAlias( $group, $alias ) {
+		// This allows silent override.
 		$this->group_aliases[ $alias ] = $group;
 	}
 
