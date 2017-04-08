@@ -2,10 +2,7 @@
 
 namespace WPMultiObjectCache;
 
-class GroupManager implements GroupManagerInterface {
-	/** @var array Aliases */
-	protected $group_aliases = [];
-
+interface GroupManagerInterface {
 	/**
 	 * Adds an alias to a group, so the same controller will be used.
 	 *
@@ -14,9 +11,7 @@ class GroupManager implements GroupManagerInterface {
 	 *
 	 * @throws \InvalidArgumentException
 	 */
-	public function addAlias( $group, $alias ) {
-		$this->group_aliases[ $alias ] = $group;
-	}
+	public function addAlias( $group, $alias );
 
 	/**
 	 * Returns the usable group from a potential alias
@@ -25,11 +20,5 @@ class GroupManager implements GroupManagerInterface {
 	 *
 	 * @return string
 	 */
-	public function get( $group ) {
-		while ( isset( $this->group_aliases[ $group ] ) ) {
-			$group = $this->group_aliases[ $group ];
-		}
-
-		return $group;
-	}
+	public function get( $group );
 }
