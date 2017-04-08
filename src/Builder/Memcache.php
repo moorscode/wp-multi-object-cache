@@ -16,6 +16,10 @@ class Memcache implements PoolBuilderInterface {
 	 * @return AbstractCachePool
 	 */
 	public function create( array $config = [] ) {
+		$config = wp_parse_args( $config, [
+			'server' => [ '127.0.0.1', 11211 ],
+		] );
+
 		$memcache = new \Memcache();
 
 		$this->initialize( $memcache, $config );
