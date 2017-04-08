@@ -213,6 +213,8 @@ class PSRCacheAdapter implements CacheInterface {
 
 		$item = $this->pool->getItem( $key );
 		$item->set( $data );
+		// If no expiration is set, Cache will not save the item but acts like it does!
+		$item->expiresAfter( null );
 
 		if ( $expire ) {
 			if ( $expire > DAY_IN_SECONDS * 30 ) {
@@ -220,8 +222,6 @@ class PSRCacheAdapter implements CacheInterface {
 			} else {
 				$item->expiresAfter( $expire );
 			}
-		} else {
-			$item->expiresAfter( null );
 		}
 
 		return $this->pool->save( $item );
