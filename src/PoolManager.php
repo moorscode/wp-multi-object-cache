@@ -2,7 +2,9 @@
 
 namespace WPMultiObjectCache;
 
+use Cache\Adapter\Common\AbstractCachePool;
 use Psr\Cache\CacheItemPoolInterface;
+use WPMultiObjectCache\Builder\Null;
 
 class PoolManager {
 	/** @var array */
@@ -77,20 +79,19 @@ class PoolManager {
 	 * @param string $name Class name of the Pool to register.
 	 * @param array  $data Configuration to use on the pool.
 	 *
-	 * @throws \InvalidArgumentException
+	 * @throws \LogicException
 	 */
 	protected function registerPool( $name, $data ) {
+		if ( empty( $data['method'] ) ) {
+			throw new \LogicException( sprintf( 'The pool %s must have a "method" defined.', $name ) );
+		}
+
 		if ( ! is_array( $data['groups'] ) || 0 === count( $data['groups'] ) ) {
-			throw new \InvalidArgumentException( sprintf( 'The pool %s must have at least one group definition.',
+			throw new \LogicException( sprintf( 'The pool %s must have at least one group definition.',
 				$name ) );
 		}
 
-		if ( empty( $data['prerequisites'] ) || $this->checkPrerequisites( $data['prerequisites'] ) ) {
-			$args                 = ( isset( $data['config'] ) ? $data['config'] : [] );
-			$this->pools[ $name ] = $this->poolFactory->get( $data['method'], $args );
-		} else {
-			trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
-		}
+		$this->pools[ $name ] = $this->createPool( $data );
 
 		foreach ( $data['groups'] as $group ) {
 			$this->poolGroupConnector->add( $this->pools[ $name ], $group );
@@ -105,25 +106,42 @@ class PoolManager {
 	 * @return bool
 	 */
 	protected function checkPrerequisites( array $prerequisites = array() ) {
-		$met = true;
-
 		foreach ( $prerequisites as $prerequisite ) {
 			switch ( $prerequisite ) {
 				case 'class':
-					$met = class_exists( $prerequisite ) && $met;
-					if ( ! $met ) {
+					if ( ! class_exists( $prerequisite ) ) {
 						return false;
 					}
 					break;
+
 				case 'function':
-					$met = function_exists( $prerequisite ) && $met;
-					if ( ! $met ) {
+					if ( ! function_exists( $prerequisite ) ) {
 						return false;
 					}
 					break;
 			}
 		}
 
-		return $met;
+		return true;
+	}
+
+	/**
+	 * Create a pool from configuration.
+	 *
+	 * @param array $data Configuration data to use.
+	 *
+	 * @return PoolBuilderInterface
+	 * @throws \LogicException
+	 */
+	protected function createPool( $data ) {
+		if ( empty( $data['prerequisites'] ) || $this->checkPrerequisites( $data['prerequisites'] ) ) {
+			$args = ( isset( $data['config'] ) ? $data['config'] : [] );
+
+			return $this->poolFactory->get( $data['method'], $args );
+		}
+
+		trigger_error( 'Pool prerequisites not met, using Null implementation.', E_USER_WARNING );
+
+		return new Null();
 	}
 }
