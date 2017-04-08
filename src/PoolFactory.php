@@ -1,6 +1,6 @@
 <?php
 
-namespace MultiObjectCache\Cache;
+namespace WPMultiObjectCache;
 
 class PoolFactory implements PoolFactoryInterface {
 	/**

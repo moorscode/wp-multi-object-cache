@@ -1,10 +1,10 @@
 <?php
 
-namespace MultiObjectCache\Cache\Builder;
+namespace WPMultiObjectCache\Builder;
 
 use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
-use MultiObjectCache\Cache\PoolBuilderInterface;
+use WPMultiObjectCache\PoolBuilderInterface;
 
 class PHP implements PoolBuilderInterface {
 	/**

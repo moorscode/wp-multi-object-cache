@@ -5,7 +5,7 @@
  *
  * @subpackage Cache
  */
-use MultiObjectCache\Cache\Manager;
+use WPMultiObjectCache\Manager;
 
 /**
  * Sets up Object Cache Global and assigns it.

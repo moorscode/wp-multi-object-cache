@@ -15,7 +15,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "MultiObjectCache\\Cache\\": "src/"
+      "WPMultiObjectCache\\": "src/"
     }
   }
 }

@@ -1,9 +1,9 @@
 <?php
 
-namespace MultiObjectCache\Cache\Builder;
+namespace WPMultiObjectCache\Builder;
 
 use Cache\Adapter\Redis\RedisCachePool;
-use MultiObjectCache\Cache\PoolBuilderInterface;
+use WPMultiObjectCache\PoolBuilderInterface;
 use Predis\Client;
 
 class Redis implements PoolBuilderInterface {

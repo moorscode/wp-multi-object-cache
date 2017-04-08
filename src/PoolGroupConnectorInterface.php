@@ -1,6 +1,6 @@
 <?php
 
-namespace MultiObjectCache\Cache;
+namespace WPMultiObjectCache;
 
 use Cache\Adapter\Common\AbstractCachePool;
 use Psr\Cache\CacheItemPoolInterface;
