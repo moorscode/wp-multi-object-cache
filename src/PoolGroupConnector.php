@@ -2,23 +2,22 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 
 class PoolGroupConnector implements PoolGroupConnectorInterface {
-	/** @var array */
-	protected $poolGroups = array();
+	/** @var CacheItemPoolInterface[] */
+	protected $poolGroups = [];
 
-	/** @var GroupManager Group Manager */
+	/** @var GroupManagerInterface Group Manager */
 	protected $groupManager;
 
 	/**
 	 * PoolGroupConnector constructor.
 	 *
-	 * @param GroupManager $groupManager
+	 * @param GroupManagerInterface $groupManager
 	 */
-	public function __construct( GroupManager $groupManager ) {
+	public function __construct( GroupManagerInterface $groupManager ) {
 		$this->groupManager = $groupManager;
 	}
 
@@ -29,8 +28,7 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @param string                 $group Group to assign to.
 	 */
 	public function add( CacheItemPoolInterface $pool, $group ) {
-		$group                      = $this->groupManager->get( $group );
-		$this->poolGroups[ $group ] = $pool;
+		$this->poolGroups[ $this->groupManager->get( $group ) ] = $pool;
 	}
 
 	/**
@@ -38,34 +36,48 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 *
 	 * @param string $group Group to get Pool for.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 */
 	public function get( $group ) {
 		static $nonPersistentFallback;
 
 		// See if the group has been registered directly.
-		if ( isset( $this->poolGroups[ $group ] ) ) {
-			return $this->poolGroups[ $group ];
-		}
+		$pool = $this->getGroup( $group );
 
 		// Lookup alias if not found.
-		$group = $this->groupManager->get( $group );
+		if ( null === $pool ) {
+			// Check if alias is present.
+			$pool = $this->getGroup( $this->groupManager->get( $group ) );
+		}
 
-		// Check if alias is present.
-		if ( isset( $this->poolGroups[ $group ] ) ) {
+		if ( null === $pool ) {
+			$pool = $this->getGroup( '' );
+		}
+
+		if ( null === $pool ) {
+			// Fallback to statically set non-persistent cache.
+			if ( null === $nonPersistentFallback ) {
+				$nonPersistentFallback = new ArrayCachePool();
+			}
+
+			$pool = $nonPersistentFallback;
+		}
+
+		return $pool;
+	}
+
+	/**
+	 * Get the group if it exists
+	 *
+	 * @param string $group Group to fetch.
+	 *
+	 * @return CacheItemPoolInterface|null
+	 */
+	protected function getGroup( $group ) {
+		if ( array_key_exists( $group, $this->poolGroups ) ) {
 			return $this->poolGroups[ $group ];
 		}
 
-		// Check if a default has been set.
-		if ( isset( $this->poolGroups[''] ) ) {
-			return $this->poolGroups[''];
-		}
-
-		// Fallback to statically set non-persistent cache.
-		if ( null === $nonPersistentFallback ) {
-			$nonPersistentFallback = new ArrayCachePool();
-		}
-
-		return $nonPersistentFallback;
+		return null;
 	}
 }
