@@ -17,13 +17,18 @@ class Predis implements PoolBuilderInterface {
 	 * @throws \Exception
 	 */
 	public function create( array $config = [] ) {
+		$config = wp_parse_args( $config, [
+			'scheme' => 'tcp',
+			'port' => 6379,
+		] );
+
 		return new PredisCachePool( $this->initialize( $config ) );
 	}
 
 	/**
 	 * Initializes the Predis client.
 	 *
-	 * @param array $config
+	 * @param array $config Configuration.
 	 *
 	 * @return Client
 	 */
