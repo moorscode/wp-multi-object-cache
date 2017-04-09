@@ -2,8 +2,8 @@
 
 namespace WPMultiObjectCache\Builder;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\PHPArray\ArrayCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
 
 class PHP implements PoolBuilderInterface {
@@ -12,7 +12,7 @@ class PHP implements PoolBuilderInterface {
 	 *
 	 * @param array $config Config to use to create the pool.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 */
 	public function create( array $config = [] ) {
 		return new ArrayCachePool();

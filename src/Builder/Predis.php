@@ -2,8 +2,8 @@
 
 namespace WPMultiObjectCache\Builder;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\Predis\PredisCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
 use Predis\Client;
 
@@ -13,7 +13,7 @@ class Predis implements PoolBuilderInterface {
 	 *
 	 * @param array $config Config to use to create the pool.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 * @throws \Exception
 	 */
 	public function create( array $config = [] ) {

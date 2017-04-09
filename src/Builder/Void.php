@@ -2,8 +2,8 @@
 
 namespace WPMultiObjectCache\Builder;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\Void\VoidCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
 
 class Void implements PoolBuilderInterface {
@@ -13,7 +13,7 @@ class Void implements PoolBuilderInterface {
 	 *
 	 * @param array $config Config to use to create the pool.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 */
 	public function create( array $config = [] ) {
 		return new VoidCachePool();

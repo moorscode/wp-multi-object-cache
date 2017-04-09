@@ -2,7 +2,8 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\Common\AbstractCachePool;
+use Cache\Adapter\Void\VoidCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 
 class PoolFactory implements PoolFactoryInterface {
 	/**
@@ -11,7 +12,7 @@ class PoolFactory implements PoolFactoryInterface {
 	 * @param string $type   Type of Pool to retrieve.
 	 * @param array  $config Optional. Configuration for creating the Pool.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 * @throws \LogicException
 	 */
 	public function get( $type, array $config = array() ) {

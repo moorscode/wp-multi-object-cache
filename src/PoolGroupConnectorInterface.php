@@ -2,7 +2,6 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 
 interface PoolGroupConnectorInterface {
@@ -26,7 +25,7 @@ interface PoolGroupConnectorInterface {
 	 *
 	 * @param string $group Group to get Pool for.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 */
 	public function get( $group );
 }

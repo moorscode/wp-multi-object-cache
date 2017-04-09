@@ -3,8 +3,8 @@
 namespace WPMultiObjectCache\Builder;
 
 use Cache\Adapter\Redis\RedisCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
-use Predis\Client;
 
 class Redis implements PoolBuilderInterface {
 	/**
@@ -12,7 +12,7 @@ class Redis implements PoolBuilderInterface {
 	 *
 	 * @param array $config Redis configuration.
 	 *
-	 * @return RedisCachePool
+	 * @return CacheItemPoolInterface
 	 *
 	 * @throws \RuntimeException
 	 */

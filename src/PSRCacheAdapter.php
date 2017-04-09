@@ -2,11 +2,11 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\Common\AbstractCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 
 class PSRCacheAdapter implements CacheInterface {
 
-	/** @var AbstractCachePool Pool to use */
+	/** @var CacheItemPoolInterface Pool to use */
 	protected $pool;
 
 	/** @var string Group that was called for */
@@ -15,10 +15,10 @@ class PSRCacheAdapter implements CacheInterface {
 	/**
 	 * WPCachePSRAdapter constructor.
 	 *
-	 * @param AbstractCachePool $pool
-	 * @param string            $group
+	 * @param CacheItemPoolInterface $pool
+	 * @param string                 $group
 	 */
-	public function __construct( AbstractCachePool $pool, $group ) {
+	public function __construct( CacheItemPoolInterface $pool, $group ) {
 		$this->pool  = $pool;
 		$this->group = $group;
 	}

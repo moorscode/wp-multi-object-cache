@@ -2,8 +2,8 @@
 
 namespace WPMultiObjectCache\Builder;
 
-use Cache\Adapter\Common\AbstractCachePool;
 use Cache\Adapter\Memcached\MemcachedCachePool;
+use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
 
 class Memcached implements PoolBuilderInterface {
@@ -12,7 +12,7 @@ class Memcached implements PoolBuilderInterface {
 	 *
 	 * @param array $config Config to use to create the pool.
 	 *
-	 * @return AbstractCachePool
+	 * @return CacheItemPoolInterface
 	 * @throws \Exception
 	 */
 	public function create( array $config = [] ) {
