@@ -15,4 +15,11 @@ interface PoolFactoryInterface {
 	 * @throws \InvalidArgumentException
 	 */
 	public function get( $type, array $config = array() );
+
+	/**
+	 * Provides a Void pool.
+	 *
+	 * @return CacheItemPoolInterface
+	 */
+	public function getVoidPool();
 }

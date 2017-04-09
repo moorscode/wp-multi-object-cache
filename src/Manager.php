@@ -30,10 +30,12 @@ class Manager {
 			define( 'WP_CACHE_KEY_SALT', '' );
 		}
 
-		self::$groupManager       = new GroupManager();
-		self::$poolGroupConnector = new PoolGroupConnector( self::$groupManager );
+		$factory = new PoolFactory();
 
-		self::$poolManager = new PoolManager( self::$poolGroupConnector, new PoolFactory() );
+		self::$groupManager       = new GroupManager();
+		self::$poolGroupConnector = new PoolGroupConnector( self::$groupManager, $factory );
+
+		self::$poolManager = new PoolManager( self::$poolGroupConnector, $factory );
 		self::$poolManager->initialize();
 
 		self::$blogManager = new CurrentBlogManager( \get_current_blog_id() );

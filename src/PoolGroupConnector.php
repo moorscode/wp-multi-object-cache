@@ -2,7 +2,6 @@
 
 namespace WPMultiObjectCache;
 
-use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 
 class PoolGroupConnector implements PoolGroupConnectorInterface {
@@ -12,13 +11,18 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	/** @var GroupManagerInterface Group Manager */
 	protected $groupManager;
 
+	/** @var PoolFactoryInterface Factory */
+	protected $factory;
+
 	/**
 	 * PoolGroupConnector constructor.
 	 *
-	 * @param GroupManagerInterface $groupManager
+	 * @param GroupManagerInterface $groupManager Group manager to use.
+	 * @param PoolFactoryInterface  $factory      Factory to use.
 	 */
-	public function __construct( GroupManagerInterface $groupManager ) {
+	public function __construct( GroupManagerInterface $groupManager, PoolFactoryInterface $factory ) {
 		$this->groupManager = $groupManager;
+		$this->factory      = $factory;
 	}
 
 	/**
@@ -57,7 +61,7 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 		if ( null === $pool ) {
 			// Fallback to statically set non-persistent cache.
 			if ( null === $nonPersistentFallback ) {
-				$nonPersistentFallback = new ArrayCachePool();
+				$nonPersistentFallback = $this->factory->getVoidPool();
 			}
 
 			$pool = $nonPersistentFallback;

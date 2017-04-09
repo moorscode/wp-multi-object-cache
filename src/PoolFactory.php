@@ -28,9 +28,18 @@ class PoolFactory implements PoolFactoryInterface {
 		try {
 			$pool = $builder->create( $config );
 		} catch( \Exception $e ) {
-			$pool = new VoidCachePool();
+			$pool = $this->getVoidPool();
 		}
 
 		return $pool;
+	}
+
+	/**
+	 * Creates a Void pool.
+	 *
+	 * @return CacheItemPoolInterface
+	 */
+	public function getVoidPool() {
+		return new VoidCachePool();
 	}
 }
