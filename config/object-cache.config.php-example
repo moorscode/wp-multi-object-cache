@@ -35,11 +35,5 @@ $config = [
 				'site-transient',
 			],
 		],
-		// Use Non Persistent Pool.
-		'PHP'       => [
-			'groups' => [
-				'non-persistent'
-			],
-		],
 	],
 ];
