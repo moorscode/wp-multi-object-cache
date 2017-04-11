@@ -10,9 +10,6 @@ $config = [
 				'host' => '127.0.0.1',
 				'port' => 6379
 			],
-			'prerequisites' => [
-				'class' => 'Redis',
-			],
 			'groups'        => [
 				''
 			],
@@ -26,9 +23,6 @@ $config = [
 						11211
 					],
 				],
-			],
-			'prerequisites' => [
-				'class' => 'Memcached',
 			],
 			'groups'        => [
 				'transient',
