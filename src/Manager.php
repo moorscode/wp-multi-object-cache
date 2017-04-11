@@ -30,7 +30,10 @@ class Manager {
 			define( 'WP_CACHE_KEY_SALT', '' );
 		}
 
-		$factory = new PoolFactory();
+		$adminNotifier = new AdminNotifier();
+		$adminNotifier->add_hooks();
+
+		$factory = new PoolFactory( $adminNotifier );
 
 		self::$groupManager       = new GroupManager();
 		self::$poolGroupConnector = new PoolGroupConnector( self::$groupManager, $factory );

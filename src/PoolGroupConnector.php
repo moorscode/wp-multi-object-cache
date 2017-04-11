@@ -43,8 +43,6 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @return CacheItemPoolInterface
 	 */
 	public function get( $group ) {
-		static $nonPersistentFallback;
-
 		// See if the group has been registered directly.
 		$pool = $this->getGroup( $group );
 
@@ -59,12 +57,7 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 		}
 
 		if ( null === $pool ) {
-			// Fallback to statically set non-persistent cache.
-			if ( null === $nonPersistentFallback ) {
-				$nonPersistentFallback = $this->factory->getVoidPool();
-			}
-
-			$pool = $nonPersistentFallback;
+			$pool = $this->factory->getFallbackPool();
 		}
 
 		return $pool;

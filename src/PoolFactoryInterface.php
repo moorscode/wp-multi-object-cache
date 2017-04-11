@@ -17,9 +17,9 @@ interface PoolFactoryInterface {
 	public function get( $type, array $config = array() );
 
 	/**
-	 * Provides a Void pool.
+	 * Provides a pool to fallback on when a requested pool is unavailable.
 	 *
 	 * @return CacheItemPoolInterface
 	 */
-	public function getVoidPool();
+	public function getFallbackPool();
 }
