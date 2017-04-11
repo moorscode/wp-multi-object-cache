@@ -21,6 +21,7 @@ class Memcached implements PoolBuilderInterface {
 		] );
 
 		$memcached = $this->createInstance( $config );
+		$this->setOptions( $memcached, $config );
 
 		if ( ! $this->addServers( $memcached, $this->getServers( $config ) ) ) {
 			throw new \RuntimeException( 'Memcached failed to add servers to the configuration.' );
@@ -126,5 +127,21 @@ class Memcached implements PoolBuilderInterface {
 		}
 
 		return $unused;
+	}
+
+	/**
+	 * Set options from configuration
+	 *
+	 * @param \Memcached $memcached
+	 * @param array      $config
+	 */
+	private function setOptions( \Memcached $memcached, array $config ) {
+		if ( empty( $config['options'] ) ) {
+			return;
+		}
+
+		foreach ( $config['options'] as $key => $value ) {
+			$memcached->setOption( $key, $value );
+		}
 	}
 }
