@@ -4,6 +4,7 @@ namespace WPMultiObjectCache\Builder;
 
 use Cache\Adapter\Redis\RedisCachePool;
 use Psr\Cache\CacheItemPoolInterface;
+use WPMultiObjectCache\Manager;
 use WPMultiObjectCache\PoolBuilderInterface;
 
 class Redis implements PoolBuilderInterface {
@@ -34,24 +35,22 @@ class Redis implements PoolBuilderInterface {
 	 * @throws \RuntimeException
 	 */
 	protected function initialize( array $config ) {
-		$connected = false;
-
-		$type = $this->getRedisType();
+		$type  = $this->getRedisType();
 		$redis = new \Redis();
+
+		Manager::convertWarningToException();
 
 		switch ( $type ) {
 			case 'hhvm':
-				$connected = $this->connectHHVM( $redis, $config );
+				$this->connectHHVM( $redis, $config );
 				break;
 
 			case 'pecl':
-				$connected = $this->connectPECL( $redis, $config );
+				$this->connectPECL( $redis, $config );
 				break;
 		}
 
-		if ( ! $connected ) {
-			throw new \RuntimeException( 'Redis could not connect.' );
-		}
+		Manager::restoreErrorHandling();
 
 		$this->setExtensionConfiguration( $redis, $config );
 

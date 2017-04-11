@@ -100,4 +100,34 @@ class Manager {
 	public static function getKeyFormat() {
 		return self::$keyFormat->get();
 	}
+
+	public static function convertWarningToException() {
+		set_error_handler( [ __CLASS__, 'warningToExceptionHandler' ] );
+	}
+
+	public static function restoreErrorHandling() {
+		restore_error_handler();
+	}
+
+	/**
+	 * @param $errno
+	 * @param $errstr
+	 * @param $errfile
+	 * @param $errline
+	 *
+	 * @return bool
+	 * @throws \ErrorException
+	 */
+	public static function warningToExceptionHandler( $errno, $errstr, $errfile, $errline ) {
+		// error was suppressed with the @-operator
+		if ( 0 === error_reporting() ) {
+			return false;
+		}
+
+		if ( $errno === E_WARNING ) {
+			throw new \ErrorException( $errstr, 0, $errno, $errfile, $errline );
+		}
+
+		return false;
+	}
 }
