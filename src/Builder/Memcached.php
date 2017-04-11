@@ -27,6 +27,8 @@ class Memcached implements PoolBuilderInterface {
 			throw new \RuntimeException( 'Memcached failed to add servers to the configuration.' );
 		}
 
+		$this->testConnection( $memcached );
+
 		return new MemcachedCachePool( $memcached );
 	}
 
@@ -143,5 +145,29 @@ class Memcached implements PoolBuilderInterface {
 		foreach ( $config['options'] as $key => $value ) {
 			$memcached->setOption( $key, $value );
 		}
+	}
+
+	/**
+	 * Test for server connections
+	 *
+	 * @param \Memcached $memcached Memcached instance.
+	 *
+	 * @return bool True when at least one server is connected.
+	 * @throws \RuntimeException
+	 */
+	private function testConnection( \Memcached $memcached ) {
+		$status = $memcached->getStats();
+		if ( false === $status ) {
+			throw new \RuntimeException( 'Failed to connect' );
+		}
+
+		foreach ( $status as $server => $stats ) {
+
+			if ( $stats['pid'] > 0 ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }
