@@ -38,8 +38,13 @@ class Memcached implements PoolBuilderInterface {
 	 * @param array $config Configuration supplied.
 	 *
 	 * @return \Memcached
+	 * @throws \RuntimeException
 	 */
 	protected function createInstance( array $config ) {
+		if ( ! class_exists( 'Memcached' ) ) {
+			throw new \RuntimeException( 'The Memcached class could not be found, please install the PHP Memcached extension' );
+		}
+
 		if ( ! empty( $config['persistent'] ) && is_string( $config['persistent'] ) ) {
 			return new \Memcached( $config['persistent'] );
 		}

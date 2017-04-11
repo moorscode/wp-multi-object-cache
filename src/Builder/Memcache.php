@@ -21,7 +21,7 @@ class Memcache implements PoolBuilderInterface {
 			'server' => [ '127.0.0.1', 11211 ],
 		] );
 
-		$memcache = new \Memcache();
+		$memcache = $this->createInstance();
 
 		if ( ! $this->initialize( $memcache, $config ) ) {
 			throw new \RuntimeException( 'Memcache failed to add servers to it\'s pool.' );
@@ -59,5 +59,19 @@ class Memcache implements PoolBuilderInterface {
 		$success = array_filter( $results );
 
 		return ( count( $success ) === count( $results ) );
+	}
+
+	/**
+	 * Creates a new Memcache instance.
+	 *
+	 * @return \Memcache Memcache instance.
+	 * @throws \RuntimeException
+	 */
+	protected function createInstance() {
+		if ( ! class_exists( 'Memcache' ) ) {
+			throw new \RuntimeException( 'The class Memcache could not be found, please install the PHP Memcache extension' );
+		}
+
+		return new \Memcache();
 	}
 }

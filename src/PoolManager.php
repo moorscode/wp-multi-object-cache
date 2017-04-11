@@ -3,7 +3,6 @@
 namespace WPMultiObjectCache;
 
 use Psr\Cache\CacheItemPoolInterface;
-use WPMultiObjectCache\Builder\Void;
 
 class PoolManager {
 	/** @var array */
@@ -98,49 +97,15 @@ class PoolManager {
 	}
 
 	/**
-	 * Checks for all prerequisites
-	 *
-	 * @param array $prerequisites Prerequisites to check.
-	 *
-	 * @return bool
-	 */
-	protected function checkPrerequisites( array $prerequisites = array() ) {
-		foreach ( $prerequisites as $prerequisite ) {
-			switch ( $prerequisite ) {
-				case 'class':
-					if ( ! class_exists( $prerequisite ) ) {
-						return false;
-					}
-					break;
-
-				case 'function':
-					if ( ! function_exists( $prerequisite ) ) {
-						return false;
-					}
-					break;
-			}
-		}
-
-		return true;
-	}
-
-	/**
 	 * Create a pool from configuration.
 	 *
 	 * @param array $data Configuration data to use.
 	 *
-	 * @return PoolBuilderInterface
+	 * @return CacheItemPoolInterface
 	 * @throws \LogicException
 	 */
 	protected function createPool( $data ) {
-		if ( empty( $data['prerequisites'] ) || $this->checkPrerequisites( $data['prerequisites'] ) ) {
-			$args = ( isset( $data['config'] ) ? $data['config'] : [] );
-
-			return $this->poolFactory->get( $data['method'], $args );
-		}
-
-		trigger_error( 'Pool prerequisites not met, using Void (Null) implementation.', E_USER_WARNING );
-
-		return new Void();
+		$args = ( isset( $data['config'] ) ? $data['config'] : [] );
+		return $this->poolFactory->get( $data['method'], $args );
 	}
 }

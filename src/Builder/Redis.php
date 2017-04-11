@@ -35,6 +35,10 @@ class Redis implements PoolBuilderInterface {
 	 * @throws \RuntimeException
 	 */
 	protected function initialize( array $config ) {
+		if ( ! class_exists( 'Redis' ) ) {
+			throw new \RuntimeException( 'The Redis class could not be found, please install the PHP Redis extension' );
+		}
+
 		$type  = $this->getRedisType();
 		$redis = new \Redis();
 
