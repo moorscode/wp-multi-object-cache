@@ -1,4 +1,5 @@
 vendor/
+composer.lock
 
 # Don't save configuration file
 config/object-cache.config.php
