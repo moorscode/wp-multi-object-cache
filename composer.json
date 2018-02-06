@@ -3,7 +3,7 @@
   "description": "WordPress Multi Object Cache allowing for a cache implementation on a group basis.",
   "type": "wordpress-muplugin",
   "require": {
-    "cache/cache": "^0.4.0",
+    "cache/cache": "^1.0.0",
     "predis/predis": "^1.1"
   },
   "license": "GPLv3",
