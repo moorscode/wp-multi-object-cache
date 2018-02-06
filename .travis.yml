@@ -9,6 +9,8 @@ branches:
 matrix:
   fast_finish: true
   include:
+    - php: 7.2
+      env: PHPLINT=1
     - php: 7.0
       env: PHPLINT=1
     - php: 5.4
@@ -19,10 +21,7 @@ cache:
     - vendor
 
 install:
-- phpenv local 5.6
-- composer selfupdate 1.0.0 --no-interaction
 - composer install --no-interaction
-- phpenv local --unset
 
 script:
 - if [[ "$PHPLINT" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
