@@ -3,7 +3,7 @@
 namespace WPMultiObjectCache;
 
 class AdminNotification {
-	/** @var AdminNotificationTypeInterface Type */
+	/** @var string Type */
 	protected $type;
 
 	/** @var string Message */
@@ -12,10 +12,10 @@ class AdminNotification {
 	/**
 	 * AdminNotification constructor.
 	 *
-	 * @param AdminNotificationTypeInterface $type
-	 * @param string                         $message
+	 * @param string $message
+	 * @param string $type
 	 */
-	public function __construct( AdminNotificationTypeInterface $type, $message ) {
+	public function __construct( $message, $type = 'info' ) {
 		$this->type    = $type;
 		$this->message = $message;
 	}
@@ -26,7 +26,7 @@ class AdminNotification {
 	 * @return string
 	 */
 	public function getType() {
-		return $this->type->get();
+		return $this->type;
 	}
 
 	/**

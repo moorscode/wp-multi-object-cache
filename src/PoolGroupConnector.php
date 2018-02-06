@@ -4,11 +4,11 @@ namespace WPMultiObjectCache;
 
 use Psr\Cache\CacheItemPoolInterface;
 
-class PoolGroupConnector implements PoolGroupConnectorInterface {
+class PoolGroupConnector {
 	/** @var CacheItemPoolInterface[] */
 	protected $poolGroups = [];
 
-	/** @var GroupManagerInterface Group Manager */
+	/** @var GroupManager Group Manager */
 	protected $groupManager;
 
 	/** @var PoolFactoryInterface Factory */
@@ -17,10 +17,10 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	/**
 	 * PoolGroupConnector constructor.
 	 *
-	 * @param GroupManagerInterface $groupManager Group manager to use.
-	 * @param PoolFactoryInterface  $factory      Factory to use.
+	 * @param GroupManager         $groupManager Group manager to use.
+	 * @param PoolFactoryInterface $factory      Factory to use.
 	 */
-	public function __construct( GroupManagerInterface $groupManager, PoolFactoryInterface $factory ) {
+	public function __construct( GroupManager $groupManager, PoolFactoryInterface $factory ) {
 		$this->groupManager = $groupManager;
 		$this->factory      = $factory;
 	}
@@ -32,7 +32,10 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 	 * @param string                 $group Group to assign to.
 	 */
 	public function add( CacheItemPoolInterface $pool, $group ) {
-		$this->poolGroups[ $this->groupManager->get( $group ) ] = $pool;
+		try {
+			$this->poolGroups[ $this->groupManager->get( $group ) ] = $pool;
+		} catch( \LogicException $exception ) {
+		}
 	}
 
 	/**
@@ -49,7 +52,10 @@ class PoolGroupConnector implements PoolGroupConnectorInterface {
 		// Lookup alias if not found.
 		if ( null === $pool ) {
 			// Check if alias is present.
-			$pool = $this->getGroup( $this->groupManager->get( $group ) );
+			try {
+				$pool = $this->getGroup( $this->groupManager->get( $group ) );
+			} catch( \LogicException $exception ) {
+			}
 		}
 
 		if ( null === $pool ) {

@@ -41,7 +41,7 @@ class PoolFactory implements PoolFactoryInterface {
 			$pool = $builder->create( $config );
 		} catch ( \Exception $e ) {
 			$message = sprintf( '%s Cache Builder problem occurred: ' . $e->getMessage() . '. Reverting to non-persistent cache.', $type );
-			$this->adminNotifier->add( new AdminNotification( new AdminNotificationTypeError(), $message ) );
+			$this->adminNotifier->add( new AdminNotification( 'error', $message ) );
 
 			$pool = $this->getFallbackPool();
 		}

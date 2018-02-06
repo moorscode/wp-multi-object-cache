@@ -8,7 +8,7 @@ class PoolManager {
 	/** @var array */
 	protected $pools = array();
 
-	/** @var PoolGroupConnectorInterface Pool Group Connector */
+	/** @var PoolGroupConnector Pool Group Connector */
 	protected $poolGroupConnector;
 
 	/** @var PoolFactoryInterface Pool Factory */
@@ -17,10 +17,10 @@ class PoolManager {
 	/**
 	 * PoolManager constructor.
 	 *
-	 * @param PoolGroupConnectorInterface $poolGroupConnector Pool Group connector instance.
-	 * @param PoolFactoryInterface        $poolFactory        Pool Factory instance.
+	 * @param PoolGroupConnector   $poolGroupConnector Pool Group connector instance.
+	 * @param PoolFactoryInterface $poolFactory        Pool Factory instance.
 	 */
-	public function __construct( PoolGroupConnectorInterface $poolGroupConnector, PoolFactoryInterface $poolFactory ) {
+	public function __construct( PoolGroupConnector $poolGroupConnector, PoolFactoryInterface $poolFactory ) {
 		$this->poolGroupConnector = $poolGroupConnector;
 		$this->poolFactory        = $poolFactory;
 	}
@@ -106,6 +106,7 @@ class PoolManager {
 	 */
 	protected function createPool( $data ) {
 		$args = ( isset( $data['config'] ) ? $data['config'] : [] );
+
 		return $this->poolFactory->get( $data['method'], $args );
 	}
 }

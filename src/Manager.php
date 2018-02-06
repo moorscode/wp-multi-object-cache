@@ -47,6 +47,8 @@ class Manager {
 	}
 
 	/**
+	 * Assigns a group to the connector.
+	 *
 	 * @param CacheItemPoolInterface $pool
 	 * @param string                 $group
 	 */
@@ -104,15 +106,23 @@ class Manager {
 		return self::$keyFormat->get();
 	}
 
+	/**
+	 * Sets a custom error handler
+	 */
 	public static function convertWarningToException() {
 		set_error_handler( [ __CLASS__, 'warningToExceptionHandler' ] );
 	}
 
+	/**
+	 * Restores the default error handler
+	 */
 	public static function restoreErrorHandling() {
 		restore_error_handler();
 	}
 
 	/**
+	 * Converts a warning to a exception
+	 *
 	 * @param $errno
 	 * @param $errstr
 	 * @param $errfile

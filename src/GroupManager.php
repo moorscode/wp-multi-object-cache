@@ -2,7 +2,7 @@
 
 namespace WPMultiObjectCache;
 
-class GroupManager implements GroupManagerInterface {
+class GroupManager {
 	/** @var array Aliases */
 	protected $group_aliases = [];
 
