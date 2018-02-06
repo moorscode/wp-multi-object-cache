@@ -5,7 +5,7 @@ Configure per "group" what cache implementation should be used.
 
 ## Requirements
 - Composer
-- PHP 5.4
+- PHP 5.6
 
 # Installation
 
