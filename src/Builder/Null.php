@@ -6,7 +6,7 @@ use Cache\Adapter\Void\VoidCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\PoolBuilderInterface;
 
-class Void implements PoolBuilderInterface {
+class Null implements PoolBuilderInterface {
 
 	/**
 	 * Creates a pool
