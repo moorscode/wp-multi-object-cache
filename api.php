@@ -5,31 +5,34 @@
  *
  * @subpackage Cache
  */
+
 use WPMultiObjectCache\Manager;
 
 /**
  * Sets up Object Cache Global and assigns it.
  */
-function wp_cache_init() {
-	Manager::initialize();
+function wp_cache_init()
+{
+    Manager::initialize();
 }
 
 /**
  * Adds data to the cache, if the cache key doesn't already exist.
  *
- * @param int|string $key The cache key to use for retrieval later.
- * @param mixed $data The data to add to the cache.
- * @param string $group Optional. The group to add the cache to. Enables the same key
+ * @param int|string $key    The cache key to use for retrieval later.
+ * @param mixed      $data   The data to add to the cache.
+ * @param string     $group  Optional. The group to add the cache to. Enables the same key
  *                           to be used across groups. Default empty.
- * @param int $expire Optional. When the cache data should expire, in seconds.
+ * @param int        $expire Optional. When the cache data should expire, in seconds.
  *                           Default 0 (no expiration).
  *
  * @return bool False if cache key and group already exist, true on success.
  */
-function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
-	$object_cache = Manager::getPool( $group );
+function wp_cache_add($key, $data, $group = '', $expire = 0)
+{
+    $object_cache = Manager::getPool($group);
 
-	return $object_cache->add( $key, $data, $expire );
+    return $object_cache->add($key, $data, $expire);
 }
 
 /**
@@ -43,33 +46,36 @@ function wp_cache_add( $key, $data, $group = '', $expire = 0 ) {
  *
  * @return true Always returns true.
  */
-function wp_cache_close() {
-	return true;
+function wp_cache_close()
+{
+    return true;
 }
 
 /**
  * Decrements numeric cache item's value.
  *
- * @param int|string $key The cache key to decrement.
- * @param int $offset Optional. The amount by which to decrement the item's value. Default 1.
- * @param string $group Optional. The group the key is in. Default empty.
+ * @param int|string $key    The cache key to decrement.
+ * @param int        $offset Optional. The amount by which to decrement the item's value. Default 1.
+ * @param string     $group  Optional. The group the key is in. Default empty.
  *
  * @return false|int False on failure, the item's new value on success.
  */
-function wp_cache_decr( $key, $offset = 1, $group = '' ) {
-	return Manager::getPool( $group )->decrease( $key, $offset );
+function wp_cache_decr($key, $offset = 1, $group = '')
+{
+    return Manager::getPool($group)->decrease($key, $offset);
 }
 
 /**
  * Removes the cache contents matching key and group.
  *
- * @param int|string $key What the contents in the cache are called.
- * @param string $group Optional. Where the cache contents are grouped. Default empty.
+ * @param int|string $key   What the contents in the cache are called.
+ * @param string     $group Optional. Where the cache contents are grouped. Default empty.
  *
  * @return bool True on successful removal, false on failure.
  */
-function wp_cache_delete( $key, $group = '' ) {
-	return Manager::getPool( $group )->delete( $key );
+function wp_cache_delete($key, $group = '')
+{
+    return Manager::getPool($group)->delete($key);
 }
 
 /**
@@ -79,14 +85,15 @@ function wp_cache_delete( $key, $group = '' ) {
  *
  * @return bool False on failure, true on success
  */
-function wp_cache_flush( $group = null ) {
-	// No group supplied, flush everything.
-	if ( null === $group ) {
-		return wp_cache_flush_all();
-	}
+function wp_cache_flush($group = null)
+{
+    // No group supplied, flush everything.
+    if (null === $group) {
+        return wp_cache_flush_all();
+    }
 
-	// Flush specific group.
-	return Manager::getPool( $group )->clear();
+    // Flush specific group.
+    return Manager::getPool($group)->clear();
 }
 
 /**
@@ -94,62 +101,66 @@ function wp_cache_flush( $group = null ) {
  *
  * @return bool False on failure, true on success
  */
-function wp_cache_flush_all() {
-	$success = true;
+function wp_cache_flush_all()
+{
+    $success = true;
 
-	$pools = Manager::getPools();
-	foreach ( $pools as $pool ) {
-		// @todo track status per controller for request?
-		$success = $pool->clear() && $success;
-	}
+    $pools = Manager::getPools();
+    foreach ($pools as $pool) {
+        // @todo track status per controller for request?
+        $success = $pool->clear() && $success;
+    }
 
-	return $success;
+    return $success;
 }
 
 /**
  * Retrieves the cache contents from the cache by key and group.
  *
- * @param int|string $key The key under which the cache contents are stored.
- * @param string $group Optional. Where the cache contents are grouped. Default empty.
- * @param bool $force Optional. Whether to force an update of the local cache from the persistent
+ * @param int|string $key     The key under which the cache contents are stored.
+ * @param string     $group   Optional. Where the cache contents are grouped. Default empty.
+ * @param bool       $force   Optional. Whether to force an update of the local cache from the persistent
  *                            cache. Default false.
- * @param bool $found Optional. Whether the key was found in the cache. Disambiguates a return of false,
+ * @param bool       $found   Optional. Whether the key was found in the cache. Disambiguates a return of false,
  *                            a storable value. Passed by reference. Default null.
  *
  * @return bool|mixed False on failure to retrieve contents or the cache
  *                      contents on success
  */
-function wp_cache_get( $key, $group = '', $force = false, &$found = null ) {
-	return Manager::getPool( $group )->get( $key, $force, $found );
+function wp_cache_get($key, $group = '', $force = false, &$found = null)
+{
+    return Manager::getPool($group)->get($key, $force, $found);
 }
 
 /**
  * Increment numeric cache item's value
  *
- * @param int|string $key The key for the cache contents that should be incremented.
- * @param int $offset Optional. The amount by which to increment the item's value. Default 1.
- * @param string $group Optional. The group the key is in. Default empty.
+ * @param int|string $key    The key for the cache contents that should be incremented.
+ * @param int        $offset Optional. The amount by which to increment the item's value. Default 1.
+ * @param string     $group  Optional. The group the key is in. Default empty.
  *
  * @return false|int False on failure, the item's new value on success.
  */
-function wp_cache_incr( $key, $offset = 1, $group = '' ) {
-	return Manager::getPool( $group )->increase( $key, $offset );
+function wp_cache_incr($key, $offset = 1, $group = '')
+{
+    return Manager::getPool($group)->increase($key, $offset);
 }
 
 /**
  * Replaces the contents of the cache with new data.
  *
- * @param int|string $key The key for the cache data that should be replaced.
- * @param mixed $data The new data to store in the cache.
- * @param string $group Optional. The group for the cache data that should be replaced.
+ * @param int|string $key    The key for the cache data that should be replaced.
+ * @param mixed      $data   The new data to store in the cache.
+ * @param string     $group  Optional. The group for the cache data that should be replaced.
  *                           Default empty.
- * @param int $expire Optional. When to expire the cache contents, in seconds.
+ * @param int        $expire Optional. When to expire the cache contents, in seconds.
  *                           Default 0 (no expiration).
  *
  * @return bool False if original value does not exist, true if contents were replaced
  */
-function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
-	return Manager::getPool( $group )->replace( $key, $data, $expire );
+function wp_cache_replace($key, $data, $group = '', $expire = 0)
+{
+    return Manager::getPool($group)->replace($key, $data, $expire);
 }
 
 /**
@@ -157,17 +168,18 @@ function wp_cache_replace( $key, $data, $group = '', $expire = 0 ) {
  *
  * Differs from wp_cache_add() and wp_cache_replace() in that it will always write data.
  *
- * @param int|string $key The cache key to use for retrieval later.
- * @param mixed $data The contents to store in the cache.
- * @param string $group Optional. Where to group the cache contents. Enables the same key
+ * @param int|string $key    The cache key to use for retrieval later.
+ * @param mixed      $data   The contents to store in the cache.
+ * @param string     $group  Optional. Where to group the cache contents. Enables the same key
  *                           to be used across groups. Default empty.
- * @param int $expire Optional. When to expire the cache contents, in seconds.
+ * @param int        $expire Optional. When to expire the cache contents, in seconds.
  *                           Default 0 (no expiration).
  *
  * @return bool False on failure, true on success
  */
-function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
-	return Manager::getPool( $group )->set( $key, $data, $expire );
+function wp_cache_set($key, $data, $group = '', $expire = 0)
+{
+    return Manager::getPool($group)->set($key, $data, $expire);
 }
 
 /**
@@ -177,8 +189,9 @@ function wp_cache_set( $key, $data, $group = '', $expire = 0 ) {
  *
  * @param int $blog_id Site ID.
  */
-function wp_cache_switch_to_blog( $blog_id ) {
-	Manager::switchToBlog( $blog_id );
+function wp_cache_switch_to_blog($blog_id)
+{
+    Manager::switchToBlog($blog_id);
 }
 
 /**
@@ -186,11 +199,12 @@ function wp_cache_switch_to_blog( $blog_id ) {
  *
  * @param string|array $groups A group or an array of groups to add.
  */
-function wp_cache_add_global_groups( $groups ) {
-	$groups = (array) $groups;
-	foreach ( $groups as $group ) {
-		Manager::addGroupAlias( '', $group );
-	}
+function wp_cache_add_global_groups($groups)
+{
+    $groups = (array)$groups;
+    foreach ($groups as $group) {
+        Manager::addGroupAlias('', $group);
+    }
 }
 
 /**
@@ -198,12 +212,13 @@ function wp_cache_add_global_groups( $groups ) {
  *
  * @param string|array $groups A group or an array of groups to add.
  */
-function wp_cache_add_non_persistent_groups( $groups ) {
-	// Default cache doesn't persist so nothing to do here.
-	$groups = (array) $groups;
-	foreach ( $groups as $group ) {
-		Manager::addGroupAlias( 'non-persistent', $group );
-	}
+function wp_cache_add_non_persistent_groups($groups)
+{
+    // Default cache doesn't persist so nothing to do here.
+    $groups = (array)$groups;
+    foreach ($groups as $group) {
+        Manager::addGroupAlias('non-persistent', $group);
+    }
 }
 
 /**
@@ -219,10 +234,11 @@ function wp_cache_add_non_persistent_groups( $groups ) {
  * recommended outside of unit tests as the performance penalty for using it is
  * high.
  *
- * @since 2.6.0
+ * @since      2.6.0
  * @deprecated 3.5.0 WP_Object_Cache::reset()
- * @see WP_Object_Cache::reset()
+ * @see        WP_Object_Cache::reset()
  */
-function wp_cache_reset() {
-	_deprecated_function( __FUNCTION__, '3.5.0' );
+function wp_cache_reset()
+{
+    _deprecated_function(__FUNCTION__, '3.5.0');
 }

@@ -25,3 +25,4 @@ install:
 
 script:
 - if [[ "$PHPLINT" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
+- if [[ "$PHPCS" == "1" ]]; then vendor/bin/phpcs -v; fi
