@@ -10,7 +10,7 @@ matrix:
   fast_finish: true
   include:
     - php: 7.2
-      env: PHPLINT=1
+      env: PHPLINT=1 PHPCS=1
     - php: 7.0
       env: PHPLINT=1
     - php: 5.6
@@ -20,8 +20,13 @@ cache:
   directories:
     - vendor
 
+before_install:
+- phpenv config-rm xdebug.ini || echo 'No xdebug config.'
+
+
 install:
-- composer install --no-interaction
+- if [[ "$PHPCS" != "1" ]]; then composer install --no-dev --no-interaction; fi
+- if [[ "$PHPCS" == "1" ]]; then composer install --no-interaction; fi
 
 script:
 - if [[ "$PHPLINT" == "1" ]]; then find -L .  -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n 1 -P 4 php -l; fi
