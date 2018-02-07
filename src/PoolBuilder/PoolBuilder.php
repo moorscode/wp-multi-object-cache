@@ -1,10 +1,10 @@
 <?php
 
-namespace WPMultiObjectCache;
+namespace WPMultiObjectCache\PoolBuilder;
 
 use Cache\Adapter\Common\AbstractCachePool;
 
-interface PoolBuilderInterface
+interface PoolBuilder
 {
     /**
      * Creates a pool

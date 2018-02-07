@@ -12,7 +12,7 @@ if (PHP_VERSION_ID < 50400) {
 }
 
 // Make sure the repository checkout location matches this location:
-$base_path = __DIR__ . '/mu-plugins/wp-multi-object-cache';
+$base_path = __DIR__ . 'mu-plugins/wp-multi-object-cache';
 
 if (! is_dir($base_path)) {
     printf(

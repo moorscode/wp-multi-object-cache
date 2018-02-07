@@ -13,7 +13,11 @@ use WPMultiObjectCache\Manager;
  */
 function wp_cache_init()
 {
-    Manager::initialize();
+    try {
+        Manager::initialize();
+    } catch (Exception $exception) {
+        trigger_error('Cache could not be initialized.', E_USER_ERROR);
+    }
 }
 
 /**

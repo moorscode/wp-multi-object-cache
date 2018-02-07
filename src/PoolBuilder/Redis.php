@@ -1,13 +1,12 @@
 <?php
 
-namespace WPMultiObjectCache\Builder;
+namespace WPMultiObjectCache\PoolBuilder;
 
 use Cache\Adapter\Redis\RedisCachePool;
 use Psr\Cache\CacheItemPoolInterface;
 use WPMultiObjectCache\Manager;
-use WPMultiObjectCache\PoolBuilderInterface;
 
-class Redis implements PoolBuilderInterface
+class Redis implements PoolBuilder
 {
     /**
      * Creates the Redis Pool

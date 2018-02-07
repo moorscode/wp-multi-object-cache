@@ -2,7 +2,7 @@
 
 namespace WPMultiObjectCache;
 
-interface CacheInterface
+interface Cache
 {
     /**
      * Adds data to the cache, if the cache key does not already exist.

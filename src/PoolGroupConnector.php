@@ -17,17 +17,17 @@ class PoolGroupConnector
     protected $groupManager;
 
     /**
-     * @var PoolFactoryInterface Factory
+     * @var PoolFactory Factory
      */
     protected $factory;
 
     /**
      * PoolGroupConnector constructor.
      *
-     * @param GroupManager         $groupManager Group manager to use.
-     * @param PoolFactoryInterface $factory      Factory to use.
+     * @param GroupManager $groupManager Group manager to use.
+     * @param PoolFactory  $factory      Factory to use.
      */
-    public function __construct(GroupManager $groupManager, PoolFactoryInterface $factory)
+    public function __construct(GroupManager $groupManager, PoolFactory $factory)
     {
         $this->groupManager = $groupManager;
         $this->factory      = $factory;

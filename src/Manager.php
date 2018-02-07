@@ -42,7 +42,7 @@ class Manager
             define('WP_CACHE_KEY_SALT', '');
         }
 
-        $adminNotifier = new AdminNotifier();
+        $adminNotifier = new Admin\Notifier();
         $adminNotifier->addHooks();
 
         $factory = new PoolFactory($adminNotifier);
@@ -53,7 +53,7 @@ class Manager
         self::$poolManager = new PoolManager(self::$poolGroupConnector, $factory);
         self::$poolManager->initialize();
 
-        self::$blogManager = new CurrentBlogManager(\get_current_blog_id());
+        self::$blogManager = new CurrentBlogManager(get_current_blog_id());
 
         self::$keyFormat = new KeyFormat(self::$blogManager);
     }
@@ -84,7 +84,7 @@ class Manager
      *
      * @param string $group Group to get controller for.
      *
-     * @return CacheInterface
+     * @return Cache
      */
     public static function getPool($group = '')
     {

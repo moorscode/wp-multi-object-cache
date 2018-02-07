@@ -1,12 +1,11 @@
 <?php
 
-namespace WPMultiObjectCache\Builder;
+namespace WPMultiObjectCache\PoolBuilder;
 
 use Cache\Adapter\Void\VoidCachePool;
 use Psr\Cache\CacheItemPoolInterface;
-use WPMultiObjectCache\PoolBuilderInterface;
 
-class VoidBuilder implements PoolBuilderInterface
+class VoidBuilder implements PoolBuilder
 {
 
     /**

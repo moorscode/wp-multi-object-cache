@@ -4,7 +4,6 @@ namespace WPMultiObjectCache;
 
 class KeyFormat
 {
-
     /**
      * @var CurrentBlogManager Blog Manager
      */

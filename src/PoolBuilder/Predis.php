@@ -1,13 +1,12 @@
 <?php
 
-namespace WPMultiObjectCache\Builder;
+namespace WPMultiObjectCache\PoolBuilder;
 
 use Cache\Adapter\Predis\PredisCachePool;
 use Psr\Cache\CacheItemPoolInterface;
-use WPMultiObjectCache\PoolBuilderInterface;
 use Predis\Client;
 
-class Predis implements PoolBuilderInterface
+class Predis implements PoolBuilder
 {
     /**
      * Creates a pool

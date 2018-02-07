@@ -1,7 +1,4 @@
 <?php
-/**
- * Author: Jip Moors
- */
 
 namespace WPMultiObjectCache;
 
@@ -11,7 +8,7 @@ use Psr\Cache\CacheItemPoolInterface;
  * Class PSRCacheAdapter
  * @package WPMultiObjectCache
  */
-class PSRCacheAdapter implements CacheInterface
+class PSRCacheAdapter implements Cache
 {
 
     /**

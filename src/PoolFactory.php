@@ -4,20 +4,21 @@ namespace WPMultiObjectCache;
 
 use Cache\Adapter\PHPArray\ArrayCachePool;
 use Psr\Cache\CacheItemPoolInterface;
+use WPMultiObjectCache\PoolBuilder\PoolBuilder;
 
-class PoolFactory implements PoolFactoryInterface
+class PoolFactory
 {
     /**
-     * @var AdminNotifier Admin Notifier
+     * @var Admin\Notifier Admin Notifier
      */
     protected $adminNotifier;
 
     /**
      * PoolFactory constructor.
      *
-     * @param AdminNotifier $adminNotifier
+     * @param Admin\Notifier $adminNotifier
      */
-    public function __construct(AdminNotifier $adminNotifier)
+    public function __construct(Admin\Notifier $adminNotifier)
     {
         $this->adminNotifier = $adminNotifier;
     }
@@ -33,16 +34,16 @@ class PoolFactory implements PoolFactoryInterface
      */
     public function get($type, array $config = array())
     {
-        $class_name = __NAMESPACE__ . '\\Builder\\' . $type;
+        $class_name = __NAMESPACE__ . '\\PoolBuilder\\' . $type;
 
         try {
             if (! class_exists($class_name)) {
-                throw new \LogicException(sprintf('Builder %s does not exist.', $type));
+                throw new \LogicException(sprintf('PoolBuilder %s does not exist.', $type));
             }
 
             /**
- * @var PoolBuilderInterface $builder
-*/
+             * @var PoolBuilder $builder
+             */
             $builder = new $class_name();
 
             $pool = $builder->create($config);
@@ -51,7 +52,7 @@ class PoolFactory implements PoolFactoryInterface
                 '%s Cache Builder problem occurred: ' . $e->getMessage() . '. Reverting to non-persistent cache.',
                 $type
             );
-            $this->adminNotifier->add(new AdminNotification('error', $message));
+            $this->adminNotifier->add(new Admin\Notification('error', $message));
 
             $pool = $this->getFallbackPool();
         }

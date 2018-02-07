@@ -24,17 +24,17 @@ class PoolManager
     protected $poolGroupConnector;
 
     /**
-     * @var PoolFactoryInterface Pool Factory
+     * @var PoolFactory Pool Factory
      */
     protected $poolFactory;
 
     /**
      * PoolManager constructor.
      *
-     * @param PoolGroupConnector   $poolGroupConnector Pool Group connector instance.
-     * @param PoolFactoryInterface $poolFactory        Pool Factory instance.
+     * @param PoolGroupConnector $poolGroupConnector Pool Group connector instance.
+     * @param PoolFactory        $poolFactory        Pool Factory instance.
      */
-    public function __construct(PoolGroupConnector $poolGroupConnector, PoolFactoryInterface $poolFactory)
+    public function __construct(PoolGroupConnector $poolGroupConnector, PoolFactory $poolFactory)
     {
         $this->poolGroupConnector = $poolGroupConnector;
         $this->poolFactory        = $poolFactory;

@@ -1,12 +1,11 @@
 <?php
 
-namespace WPMultiObjectCache\Builder;
+namespace WPMultiObjectCache\PoolBuilder;
 
 use Cache\Adapter\Memcache\MemcacheCachePool;
 use Psr\Cache\CacheItemPoolInterface;
-use WPMultiObjectCache\PoolBuilderInterface;
 
-class Memcache implements PoolBuilderInterface
+class Memcache implements PoolBuilder
 {
 
     /**
@@ -19,7 +18,7 @@ class Memcache implements PoolBuilderInterface
      */
     public function create(array $config = [])
     {
-        $config = wp_parse_args(
+        $config = \wp_parse_args(
             $config,
             [
             'server' => ['127.0.0.1', 11211],
@@ -27,10 +26,7 @@ class Memcache implements PoolBuilderInterface
         );
 
         $memcache = $this->createInstance();
-
-        if (! $this->initialize($memcache, $config)) {
-            throw new \RuntimeException('Memcache failed to add servers to it\'s pool.');
-        }
+        $this->initialize($memcache, $config);
 
         return new MemcacheCachePool($memcache);
     }
@@ -42,6 +38,7 @@ class Memcache implements PoolBuilderInterface
      * @param array     $config   Configuration.
      *
      * @return bool
+     * @throws \RuntimeException
      */
     private function initialize($memcache, $config)
     {
@@ -67,7 +64,11 @@ class Memcache implements PoolBuilderInterface
 
         $success = array_filter($results);
 
-        return (count($success) === count($results));
+        if (count($success) !== count($results)) {
+            throw new \RuntimeException('Memcache failed to add servers to it\'s pool.');
+        }
+
+        return true;
     }
 
     /**

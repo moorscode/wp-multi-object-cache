@@ -1,8 +1,8 @@
 <?php
 
-namespace WPMultiObjectCache;
+namespace WPMultiObjectCache\Admin;
 
-class AdminNotification
+class Notification
 {
     /**
      * @var string Type
