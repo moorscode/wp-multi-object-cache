@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<ruleset name="WP Multi Object Cache">
+    <description>WP Multi Object Cache rules for PHP_CodeSniffer</description>
+
+    <file>.</file>
+
+    <exclude-pattern>config/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+
+    <arg name="extensions" value="php"/>
+    <arg value="sp"/>
+
+    <rule ref="PSR2"/>
+</ruleset>
